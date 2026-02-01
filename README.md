@@ -1,4 +1,5 @@
-# PC-MSAT Audit Interface
+# PC-MSAT — Pre-Classification Motion Structure Audit Tool
+*Disclosure-oriented audit interface for geometry-first motion analysis outputs*
 
 ## Overview
 
