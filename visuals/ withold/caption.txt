@@ -1,1 +1,22 @@
+Figure X. PC-MSAT Withhold Visual — State-Segmented Motion Trace
+
+Dataset and rendering context.
+Single real trajectory rendered under the fixed PC-MSAT renderer input contract, using the same preprocessing, sampling cadence, and state-segmentation rules as the canonical Proceed visual.
+
+What is shown.
+The upper panel shows the state-segmented motion trace.
+The lower panel shows the corresponding raw curvature signal aligned in time.
+No additional geometric or kinematic signals are included.
+
+Audit outcome.
+No contiguous segment of the trajectory satisfies the conservative geometric and persistence criteria required for a PC-MSAT Proceed audit result.
+All segments are withheld due to insufficient geometric support.
+
+Scope and limits.
+This visual discloses motion structure only.
+It does not assert physical cause, behavioral explanation, prediction, or correctness of any downstream interpretation.
+
+Interface framing.
+PC-MSAT functions as a disclosure-oriented audit interface.
+A Withhold result indicates insufficient geometric support under fixed criteria, not failure, error, or absence of motion.
 
