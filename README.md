@@ -3,10 +3,10 @@
 
 ## Overview
 
-PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of Structured Orb Dynamics (SOD)
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of Structured Orb Dynamics (SOD).
 
-SOD produces state-segmented motion traces using fixed geometric criteria.
-PC-MSAT presents these traces in an audit context to determine whether sufficient structure exists to justify downstream interpretation.
+SOD produces **state-segmented motion traces** using fixed geometric criteria.  
+PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify downstream interpretation.
 
 This repository contains **documentation and visual artifacts only**.  
 It contains **no code**, **no classifiers**, and **no decision logic**.
@@ -23,14 +23,20 @@ PC-MSAT is:
 - an **audit surface**, not a detector  
 - a **disclosure mechanism**, not an interpretation system  
 
-Specifically, PC-MSAT presents **State-Segmented Motion Traces** together with a **single supporting geometric signal**, allowing an observer to assess whether sufficient persistence exists to justify *proceeding* to downstream analysis — or whether restraint (*withholding*) is required.
+Specifically, PC-MSAT presents **State-Segmented Motion Traces** together with a **single supporting geometric signal (raw curvature)** in a standardized audit layout.
 
-Audit outcomes are **binary and conservative**:
+This layout allows an observer to assess whether sufficient persistence exists to justify *proceeding* to downstream analysis — or whether restraint (*withholding*) is required.
 
-- **Withhold** — insufficient geometric support  
-- **Proceed** — sufficient geometric support under fixed criteria  
+Audit outcomes are **binary and conservative**.
 
-These outcomes are **not** success or failure states.
+**Withhold**  
+Insufficient geometric support under fixed persistence criteria.
+
+**Proceed**  
+A contiguous segment satisfies the same criteria.
+
+These outcomes are **not measures of success or failure**.  
+They indicate only whether structural support exists for further analysis.
 
 ---
 
@@ -63,29 +69,52 @@ PC-MSAT operates **on outputs** produced by the Structured Orb Dynamics (SOD) fr
 - SOD defines a **geometry-first, state-based method** for motion analysis.  
 - PC-MSAT defines **how those outputs are exposed and audited**.
 
-PC-MSAT introduces **no new inference** beyond what is already present in the State-Segmented Motion Trace.  
+PC-MSAT introduces **no new inference** beyond what is already present in the State-Segmented Motion Trace.
+
 Its purpose is to demonstrate how restraint and withholding can be preserved at the interface level.
+
+---
+
+## PC-MSAT Audit Sheet
+
+Each audit artifact follows a fixed layout designed for transparency.
+
+The sheet contains:
+
+1. **State-segmented trajectory**  
+   Spatial motion trace rendered under equal-aspect constraints.
+
+2. **Supporting geometric signal**  
+   Raw curvature κ(t) plotted against time.
+
+3. **Persistence panel**  
+   A compact visualization of contiguous segment lengths relative to the minimum persistence requirement.
+
+4. **Audit outcome**  
+   A conservative result indicating whether interpretation should proceed or be withheld.
+
+All figures are produced under identical rules and styling so that differences arise **only from the underlying motion data**.
 
 ---
 
 ## Visual Artifacts in This Repository
 
-This repository contains a **paired set of audit visuals**:
+This repository contains a **paired demonstration set**:
 
-- **Withhold Visual**  
-  A State-Segmented Motion Trace in which no contiguous segment satisfies conservative geometric and persistence criteria.
+**Withhold Case**  
+No contiguous segment satisfies conservative geometric and persistence criteria.
 
-- **Proceed Visual**  
-  A State-Segmented Motion Trace in which a contiguous segment satisfies the same fixed criteria.
+**Proceed Case**  
+A contiguous segment satisfies the same criteria.
 
-Both visuals:
+Both artifacts:
 
-- are rendered under identical constraints  
-- use the same renderer contract  
-- include one supporting geometric signal (raw curvature)  
-- differ **only** in audit outcome  
+- are generated from fixed rules  
+- share identical layout and renderer constraints  
+- display one supporting signal (raw curvature)  
+- differ **only** in audit result  
 
-These visuals are provided for **inspection**, not persuasion.
+These artifacts illustrate the existence of a **pre-classification audit step**.
 
 ---
 
@@ -99,6 +128,7 @@ It does not attempt to:
 - explain motion origin  
 - rank hypotheses  
 - replace downstream systems  
+- influence downstream conclusions  
 
 Its sole function is to answer a constrained question:
 
@@ -127,7 +157,8 @@ Use of these materials does not imply endorsement, correctness, or applicability
 
 ## Status
 
-PC-MSAT is provided as a **stable reference interface**.  
-It is not a software project and is not intended to evolve rapidly.
+PC-MSAT is provided as a **reference demonstration interface**.
 
-Any changes will be deliberate and documented.
+It is not a software product and is not expected to evolve rapidly.
+
+Changes, when made, will be deliberate and documented.
