@@ -3,7 +3,10 @@
 
 ## Overview
 
-PC-MSAT (Pre-Classification Motion Structure Audit Tool) is a **disclosure-oriented audit interface** for inspecting the outputs of geometry-first, state-segmented motion analysis.
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of Structured Orb Dynamics (SOD)
+
+SOD produces state-segmented motion traces using fixed geometric criteria.
+PC-MSAT presents these traces in an audit context to determine whether sufficient structure exists to justify downstream interpretation.
 
 This repository contains **documentation and visual artifacts only**.  
 It contains **no code**, **no classifiers**, and **no decision logic**.
