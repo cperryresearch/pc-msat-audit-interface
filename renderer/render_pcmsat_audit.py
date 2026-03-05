@@ -193,20 +193,44 @@ def draw_curvature_panel(ax, kappa: np.ndarray, boundaries: List[int]) -> None:
 def draw_persistence_panel(
     ax_top, ax_bottom, runs: List[Tuple[int, str, int, int]], min_run: int
 ) -> None:
-    # ---- Decision layer (state-agnostic) ----
+    def _annotate_barh(ax, x: float, y: float, text: str, pad: float = 0.08) -> None:
+        """
+        Place a small label just to the right of a bar end.
+        Assumes x-limits are already set to include some breathing room.
+        """
+        ax.text(x + pad, y, text, va="center", ha="left", fontsize=8, alpha=0.9)
+
+    # Shared x-limit so both panels align and annotations have room.
     run_lengths = [length for (_, _, _, length) in runs]
+    max_len = max(run_lengths, default=0)
+    xmax = max(max_len, min_run) + 1.25  # breathing room for labels
+    if xmax <= 0:
+        xmax = 1.5
+
+    # -----------------------------
+    # Decision layer (state-agnostic)
+    # -----------------------------
     y = np.arange(len(run_lengths))
 
     ax_top.barh(y, run_lengths, color="#444444", alpha=0.9)
     ax_top.axvline(min_run, color="#444444", linewidth=1.0, alpha=0.6)
+    ax_top.set_xlim(0, xmax)
+
     ax_top.set_yticks(y)
     ax_top.set_yticklabels([f"Run {i+1}" for i in y], fontsize=8)
     ax_top.set_xlabel("run length (observations)")
-    ax_top.set_title("Contiguous Run Lengths (Decision Layer)", fontsize=10, loc="left")
+    ax_top.set_title(
+        f"Contiguous Run Lengths (Decision Layer) — MIN_RUN = {min_run}",
+        fontsize=10,
+        loc="left",
+    )
     ax_top.grid(axis="x", linestyle="-", linewidth=0.6, alpha=0.15)
     ax_top.invert_yaxis()
 
-    # ---- Diagnostic layer (state-typed; context only) ----
+    # ----------------------------------------
+    # Diagnostic layer (state-typed; context only)
+    # Grouped by state for readability; raw runs preserved.
+    # ----------------------------------------
     by_state: Dict[str, List[int]] = {s: [] for s in ALLOWED_STATES}
     for _, s, _, length in runs:
         by_state[s].append(length)
@@ -225,8 +249,8 @@ def draw_persistence_panel(
             diag_lengths.append(length)
             diag_labels.append(s if i == 0 else "")
 
-        # spacer row between state groups
-        diag_states.append("Straight")  # placeholder
+        # spacer row between state groups (transparent)
+        diag_states.append("Straight")  # placeholder; will be fully transparent
         diag_lengths.append(0)
         diag_labels.append("")
 
@@ -253,19 +277,28 @@ def draw_persistence_panel(
         bar.set_alpha(a)
 
     ax_bottom.axvline(min_run, color="#444444", linewidth=1.0, alpha=0.6)
+    ax_bottom.set_xlim(0, xmax)
+
     ax_bottom.set_yticks(y2)
     ax_bottom.set_yticklabels(diag_labels, fontsize=8)
     ax_bottom.set_xlabel("run length (observations)")
     ax_bottom.set_title(
-        "Diagnostic Runs by State (Context Only)", fontsize=10, loc="left"
+        f"Diagnostic Persistence (same runs grouped by state — non-decisional) — MIN_RUN = {min_run}",
+        fontsize=10,
+        loc="left",
     )
     ax_bottom.grid(axis="x", linestyle="-", linewidth=0.6, alpha=0.15)
     ax_bottom.invert_yaxis()
 
+    # ---- NEW: annotate run lengths on diagnostic bars (skip spacer rows) ----
+    for yi, length in zip(y2, diag_lengths):
+        if length > 0:
+            _annotate_barh(ax_bottom, float(length), float(yi), str(int(length)))
+
     ax_bottom.text(
         0.0,
         -0.35,
-        "Decision uses contiguous run length only. State-typed breakdown is diagnostic.",
+        "Decision uses contiguous run length only. Diagnostic layer preserves raw runs (grouped by state for readability).",
         transform=ax_bottom.transAxes,
         fontsize=8,
         va="top",
