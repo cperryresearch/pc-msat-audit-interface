@@ -160,6 +160,28 @@ Both artifacts:
 
 These artifacts illustrate the existence of a pre-classification audit step.
 
+## PC-MSAT Reference Demonstration
+
+This repository contains a reference demonstration of the **Pre-Classification Motion Structure Audit Tool (PC-MSAT)**.
+
+PC-MSAT performs a conservative structural audit of motion traces before downstream classification or analysis.
+
+The reference renderer produces a deterministic audit sheet consisting of:
+
+1. State-segmented trajectory  
+2. Raw curvature signal  
+3. Persistence analysis  
+4. Binary audit outcome
+
+Example outputs:
+
+- `visuals/withhold_demo.png`
+- `visuals/proceed_demo.png`
+
+Specification:
+
+`spec/pcmsat_v0_spec.md`
+
 ---
 
 ## Scope and Limitations
