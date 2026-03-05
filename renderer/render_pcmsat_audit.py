@@ -146,11 +146,41 @@ def draw_state_colored_trajectory(
     ax, x: np.ndarray, y: np.ndarray, states: np.ndarray
 ) -> None:
     runs = contiguous_runs(states)
-    for _, s, start, length in runs:
+
+    for run_idx, s, start, length in runs:
         end = start + length
+
+        # draw trajectory segment
         ax.plot(x[start:end], y[start:end], color=SOD_COLORS[s], linewidth=2)
 
-    ax.scatter([x[0]], [y[0]], s=45, color="#222222", zorder=5)  # ● start
+        # compute midpoint for index label
+        mid = start + length // 2
+        xm = x[mid]
+        ym = y[mid]
+
+        # run index marker
+        ax.text(
+            xm,
+            ym,
+            str(run_idx + 1),
+            fontsize=9,
+            ha="center",
+            va="center",
+            color="#111111",
+            bbox=dict(
+                boxstyle="circle,pad=0.25",
+                facecolor="white",
+                edgecolor="#333333",
+                linewidth=0.8,
+                alpha=0.9,
+            ),
+            zorder=6,
+        )
+
+    # start marker
+    ax.scatter([x[0]], [y[0]], s=45, color="#222222", zorder=5)
+
+    # end marker
     ax.scatter(
         [x[-1]],
         [y[-1]],
@@ -159,7 +189,7 @@ def draw_state_colored_trajectory(
         edgecolors="#222222",
         linewidths=1.6,
         zorder=5,
-    )  # ○ end
+    )
 
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel("x")
@@ -212,7 +242,9 @@ def draw_persistence_panel(
     # -----------------------------
     y = np.arange(len(run_lengths))
 
-    ax_top.barh(y, run_lengths, color="#444444", alpha=0.9)
+    colors = ["#2F7D4A" if length >= min_run else "#444444" for length in run_lengths]
+
+    ax_top.barh(y, run_lengths, color=colors, alpha=0.9)
     ax_top.axvline(min_run, color="#444444", linewidth=1.0, alpha=0.6)
     ax_top.set_xlim(0, xmax)
 
@@ -380,9 +412,12 @@ def render_audit_sheet(df: pd.DataFrame, meta: Meta, out_path: Path) -> None:
     ax2.set_title("Raw Signed Curvature κ(t)", fontsize=11, loc="left")
     draw_curvature_panel(ax2, kappa, boundaries)
 
-    gs_p3 = gs[3].subgridspec(2, 1, height_ratios=[1, 1], hspace=0.8)
+    gs_p3 = gs[3].subgridspec(2, 1, height_ratios=[1, 1], hspace=0.7)
     ax3a = fig.add_subplot(gs_p3[0])
     ax3b = fig.add_subplot(gs_p3[1])
+
+    ax3a.set_title("Persistence Analysis", fontsize=11, loc="left", pad=14)
+
     draw_persistence_panel(ax3a, ax3b, runs, meta.min_run)
 
     ax4 = fig.add_subplot(gs[4])
