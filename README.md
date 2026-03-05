@@ -1,3 +1,25 @@
+## Publication Posture
+
+PC-MSAT is published as an **interface specification and audit layout**, not as a packaged software tool.
+
+The purpose of this repository is to document the structure of a **Pre-Classification Motion Structure Audit**, including the signals, visual layout, and decision rubric used to evaluate whether a motion trace provides sufficient geometric persistence to justify downstream interpretation.
+
+Accordingly, this repository contains **documentation and visual artifacts only**.  
+It intentionally provides **no software implementation, classifiers, prediction systems, or decision logic**.
+
+This posture reflects the role PC-MSAT is designed to play within the Structured Orb Dynamics (SOD) ecosystem:
+
+- PC-MSAT is an **audit interface**, not a model.
+- PC-MSAT is a **disclosure surface**, not a detection system.
+- PC-MSAT is a **methodological contract**, not an operational pipeline component.
+
+By publishing the audit interface as a specification rather than a packaged tool, the emphasis remains on **transparency, reproducibility, and interpretive restraint**.  
+The repository defines **what evidence should be exposed and how it should be presented**, allowing observers to assess whether motion structure is sufficiently supported under fixed geometric criteria.
+
+Where such support is absent, the appropriate outcome is **withholding**, rather than forced interpretation.
+
+Future implementations of the PC-MSAT interface—if developed by downstream users—should be understood as **independent realizations of this audit specification**, not as authoritative or canonical software releases from this repository.
+
 # PC-MSAT — Pre-Classification Motion Structure Audit Tool
 *Disclosure-oriented audit interface for geometry-first motion analysis outputs*
 
