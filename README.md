@@ -5,25 +5,25 @@
 
 ## Publication Posture
 
-PC-MSAT is published as an **interface specification and audit layout**, not as a packaged software tool.
+PC-MSAT is published as an **interface specification and audit layout**, not as a packaged software product.
 
 The purpose of this repository is to document the structure of a **Pre-Classification Motion Structure Audit**, including the signals, visual layout, and decision rubric used to evaluate whether a motion trace provides sufficient geometric persistence to justify proceeding to downstream analysis.
 
-Accordingly, this repository contains **documentation and visual artifacts only**.  
-It intentionally provides **no software implementation, classifiers, prediction systems, or decision logic**.
+Accordingly, this repository is specification-first. It prioritizes **documentation, audit layout standards, and reproducible visual artifacts**.  
+Any implementation material that may appear in this repository should be understood as a **reference realization of the specification**, not as a canonical or authoritative operational system.
 
 This posture reflects the role PC-MSAT is designed to play within the Structured Orb Dynamics (SOD) ecosystem:
 
-- PC-MSAT is an **audit interface**, not a model  
-- PC-MSAT is a **disclosure surface**, not a detection system  
-- PC-MSAT is a **methodological contract**, not an operational pipeline component  
+- PC-MSAT is an **audit interface**, not a model
+- PC-MSAT is a **disclosure surface**, not a detection system
+- PC-MSAT is a **methodological contract**, not an operational pipeline component
 
 By publishing the audit interface as a specification rather than a packaged tool, the emphasis remains on **transparency, reproducibility, and interpretive restraint**.  
 The repository defines **what evidence should be exposed and how it should be presented**, allowing observers to assess whether motion structure is sufficiently supported under fixed geometric criteria.
 
 Where such support is absent, the appropriate outcome is **withholding**, rather than forced interpretation.
 
-Future implementations of the PC-MSAT interface, if developed by downstream users, should be understood as **independent realizations of this audit specification**, not as canonical or authoritative releases of this repository.
+Future implementations of the PC-MSAT interface—whether developed here as reference material or independently by downstream users—should be understood as **realizations of this audit specification**, not as claims of detection, prediction, or operational decision authority.
 
 ---
 
@@ -44,9 +44,9 @@ PC-MSAT is designed to expose whether motion structure is **geometrically and pe
 
 PC-MSAT is:
 
-- an **interface**, not a model  
-- an **audit surface**, not a detector  
-- a **disclosure mechanism**, not an interpretation system  
+- an **interface**, not a model
+- an **audit surface**, not a detector
+- a **disclosure mechanism**, not an interpretation system
 
 Specifically, PC-MSAT presents **State-Segmented Motion Traces** together with a **single supporting geometric signal (raw curvature)** in a standardized audit layout.
 
@@ -69,19 +69,19 @@ They indicate only whether structural support exists for further analysis.
 
 PC-MSAT is **explicitly not**:
 
-- a classifier  
-- a predictor  
-- a detector  
-- a decision system  
-- a recommendation engine  
+- a classifier
+- a predictor
+- a detector
+- a decision system
+- a recommendation engine
 
 PC-MSAT does **not**:
 
-- assert physical cause  
-- infer intent or behavior  
-- optimize parameters  
-- evaluate performance  
-- justify downstream action  
+- assert physical cause
+- infer intent or behavior
+- optimize parameters
+- evaluate performance
+- justify downstream action
 
 When motion structure is ambiguous or insufficiently persistent, PC-MSAT **withholds** rather than forcing interpretation.
 
@@ -91,12 +91,31 @@ When motion structure is ambiguous or insufficiently persistent, PC-MSAT **withh
 
 PC-MSAT operates **on outputs** produced by the Structured Orb Dynamics (SOD) framework.
 
-- SOD defines a **geometry-first, state-based method** for motion analysis  
+- SOD defines a **geometry-first, state-based method** for motion analysis
 - PC-MSAT defines **how those outputs are exposed and audited**
 
 PC-MSAT introduces **no new inference and performs no additional analysis** beyond what is already present in the **State-Segmented Motion Trace**.
 
 Its purpose is to demonstrate how restraint and withholding can be preserved at the interface level.
+
+---
+
+## Repository Structure
+
+```text
+spec/
+  renderer-blueprint.md
+  paired-demo-data-selection-protocol.md
+
+visuals/
+  audit sheet artifacts
+```
+
+The `spec` directory defines the PC-MSAT interface rules and demonstration protocols.
+
+The `visuals` directory contains rendered audit sheet artifacts produced according to those specifications.
+
+See `spec/renderer-blueprint.md` for the audit sheet rendering contract, and `spec/paired-demo-data-selection-protocol.md` for how the paired Proceed/Withhold traces are selected.
 
 ---
 
@@ -106,25 +125,25 @@ Each audit artifact follows a fixed layout designed for transparency.
 
 The sheet contains:
 
-1. **State-segmented trajectory**  
-   Spatial motion trace rendered under equal-aspect constraints.
+**State-segmented trajectory**  
+Spatial motion trace rendered under equal-aspect constraints.
 
-2. **Supporting geometric signal**  
-   Raw curvature κ(t) plotted against time.
+**Supporting geometric signal**  
+Raw curvature κ(t) plotted against observation index.
 
-3. **Persistence panel**  
-   A compact visualization of contiguous segment lengths relative to the minimum persistence requirement.
+**Persistence panel**  
+A compact visualization of contiguous segment lengths relative to the minimum persistence requirement.
 
-4. **Audit outcome**  
-   A conservative result indicating whether interpretation should proceed or be withheld.
+**Audit outcome**  
+A conservative result indicating whether interpretation should proceed or be withheld.
 
-All figures are produced under identical rules and styling so that differences arise **only from the underlying motion data**.
+All figures are produced under identical rules and styling so that differences arise only from the underlying motion data.
 
 ---
 
 ## Visual Artifacts in This Repository
 
-This repository contains a **paired demonstration set**:
+This repository contains a paired demonstration set:
 
 **Withhold Case**  
 No contiguous segment satisfies conservative geometric and persistence criteria.
@@ -134,12 +153,12 @@ A contiguous segment satisfies the same criteria.
 
 Both artifacts:
 
-- are generated from fixed rules  
-- share identical layout and renderer constraints  
-- display one supporting signal (raw curvature)  
-- differ **only** in audit result  
+- are generated from fixed rules
+- share identical layout and renderer constraints
+- display one supporting signal (raw curvature)
+- differ only in audit result
 
-These artifacts illustrate the existence of a **pre-classification audit step**.
+These artifacts illustrate the existence of a pre-classification audit step.
 
 ---
 
@@ -149,15 +168,15 @@ PC-MSAT is intentionally narrow in scope.
 
 It does not attempt to:
 
-- resolve ambiguity  
-- explain motion origin  
-- rank hypotheses  
-- replace downstream systems  
-- influence downstream conclusions  
+- resolve ambiguity
+- explain motion origin
+- rank hypotheses
+- replace downstream systems
+- influence downstream conclusions
 
 Its sole function is to answer a constrained question:
 
-> *Is there sufficient, persistence-supported geometric structure to justify proceeding — or should interpretation be withheld?*
+> Is there sufficient, persistence-supported geometric structure to justify proceeding — or should interpretation be withheld?
 
 ---
 
@@ -165,8 +184,8 @@ Its sole function is to answer a constrained question:
 
 All documentation, text, and visual artifacts in this repository are licensed under:
 
-**Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International  
-(CC BY-NC-ND 4.0)**
+**Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International**  
+(CC BY-NC-ND 4.0)
 
 See the `LICENSE` file for full terms.
 
@@ -174,7 +193,7 @@ See the `LICENSE` file for full terms.
 
 ## Citation and Use
 
-PC-MSAT materials may be shared and cited for **non-commercial, non-derivative** purposes with attribution.
+PC-MSAT materials may be shared and cited for non-commercial, non-derivative purposes with attribution.
 
 Use of these materials does not imply endorsement, correctness, or applicability to any specific domain or downstream system.
 
@@ -182,8 +201,8 @@ Use of these materials does not imply endorsement, correctness, or applicability
 
 ## Status
 
-PC-MSAT is provided as a **reference demonstration interface**.
+PC-MSAT is provided as a reference demonstration interface.
 
-It is not a software product and is not expected to evolve rapidly.
+It is not a packaged software product and is not expected to evolve rapidly.
 
 Changes, when made, will be deliberate and documented.
