@@ -1,37 +1,40 @@
+# PC-MSAT — Pre-Classification Motion Structure Audit Tool
+*Disclosure-oriented audit interface for geometry-first motion analysis outputs*
+
+---
+
 ## Publication Posture
 
 PC-MSAT is published as an **interface specification and audit layout**, not as a packaged software tool.
 
-The purpose of this repository is to document the structure of a **Pre-Classification Motion Structure Audit**, including the signals, visual layout, and decision rubric used to evaluate whether a motion trace provides sufficient geometric persistence to justify downstream interpretation.
+The purpose of this repository is to document the structure of a **Pre-Classification Motion Structure Audit**, including the signals, visual layout, and decision rubric used to evaluate whether a motion trace provides sufficient geometric persistence to justify proceeding to downstream analysis.
 
 Accordingly, this repository contains **documentation and visual artifacts only**.  
 It intentionally provides **no software implementation, classifiers, prediction systems, or decision logic**.
 
 This posture reflects the role PC-MSAT is designed to play within the Structured Orb Dynamics (SOD) ecosystem:
 
-- PC-MSAT is an **audit interface**, not a model.
-- PC-MSAT is a **disclosure surface**, not a detection system.
-- PC-MSAT is a **methodological contract**, not an operational pipeline component.
+- PC-MSAT is an **audit interface**, not a model  
+- PC-MSAT is a **disclosure surface**, not a detection system  
+- PC-MSAT is a **methodological contract**, not an operational pipeline component  
 
 By publishing the audit interface as a specification rather than a packaged tool, the emphasis remains on **transparency, reproducibility, and interpretive restraint**.  
 The repository defines **what evidence should be exposed and how it should be presented**, allowing observers to assess whether motion structure is sufficiently supported under fixed geometric criteria.
 
 Where such support is absent, the appropriate outcome is **withholding**, rather than forced interpretation.
 
-Future implementations of the PC-MSAT interface—if developed by downstream users—should be understood as **independent realizations of this audit specification**, not as authoritative or canonical software releases from this repository.
+Future implementations of the PC-MSAT interface, if developed by downstream users, should be understood as **independent realizations of this audit specification**, not as canonical or authoritative releases of this repository.
 
-# PC-MSAT — Pre-Classification Motion Structure Audit Tool
-*Disclosure-oriented audit interface for geometry-first motion analysis outputs*
+---
 
 ## Overview
 
-PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of Structured Orb Dynamics (SOD).
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of **Structured Orb Dynamics (SOD)**.
 
 SOD produces **state-segmented motion traces** using fixed geometric criteria.  
-PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify downstream interpretation.
+PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify proceeding to downstream analysis.
 
-This repository contains **documentation and visual artifacts only**.  
-It contains **no code**, **no classifiers**, and **no decision logic**.
+This repository documents the **PC-MSAT audit interface** and provides visual artifacts demonstrating its application.
 
 PC-MSAT is designed to expose whether motion structure is **geometrically and persistently supported** under fixed criteria, or whether such support is **insufficient and therefore withheld**.
 
@@ -88,10 +91,10 @@ When motion structure is ambiguous or insufficiently persistent, PC-MSAT **withh
 
 PC-MSAT operates **on outputs** produced by the Structured Orb Dynamics (SOD) framework.
 
-- SOD defines a **geometry-first, state-based method** for motion analysis.  
-- PC-MSAT defines **how those outputs are exposed and audited**.
+- SOD defines a **geometry-first, state-based method** for motion analysis  
+- PC-MSAT defines **how those outputs are exposed and audited**
 
-PC-MSAT introduces **no new inference** beyond what is already present in the State-Segmented Motion Trace.
+PC-MSAT introduces **no new inference and performs no additional analysis** beyond what is already present in the **State-Segmented Motion Trace**.
 
 Its purpose is to demonstrate how restraint and withholding can be preserved at the interface level.
 
