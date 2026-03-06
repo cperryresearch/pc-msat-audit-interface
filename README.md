@@ -15,6 +15,30 @@ PC-MSAT prioritizes restraint: when geometric persistence is insufficient, the a
 
 ---
 
+┌─────────────────────────────────────────────┐
+│ Panel 1 — State-Segmented Motion Trace      │
+│                                             │
+│ Equal-aspect spatial trajectory showing    │
+│ state segmentation along the motion path.  │
+├─────────────────────────────────────────────┤
+│ Panel 2 — Raw Curvature κ(t)                │
+│                                             │
+│ Supporting geometric signal plotted        │
+│ against observation index.                 │
+├─────────────────────────────────────────────┤
+│ Panel 3 — Persistence Panel                 │
+│                                             │
+│ Contiguous segment run lengths relative    │
+│ to the minimum persistence requirement.    │
+├─────────────────────────────────────────────┤
+│ Panel 4 — Audit Outcome                    │
+│                                             │
+│ PROCEED  — persistence threshold satisfied │
+│ WITHHOLD — insufficient geometric support  │
+└─────────────────────────────────────────────┘
+
+---
+
 ## Publication Posture
 
 PC-MSAT is published as an **interface specification and audit layout**, not as a packaged software product.
