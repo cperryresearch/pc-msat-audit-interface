@@ -2,6 +2,17 @@
 
 *Disclosure-oriented audit interface for geometry-first motion analysis outputs*
 
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is a geometry-first audit interface used to evaluate whether a motion trace contains sufficient geometric persistence to justify downstream analysis.
+
+The audit operates upstream of classification or interpretation systems. It inspects a state-segmented motion trace and associated geometric signals to determine whether structural support is present.
+
+PC-MSAT produces one of two outcomes:
+
+- **PROCEED** — persistence meets the minimum structural threshold.
+- **WITHHOLD** — geometric support is insufficient for further analysis.
+
+PC-MSAT prioritizes restraint: when geometric persistence is insufficient, the audit explicitly withholds downstream analysis.
+
 ---
 
 ## Publication Posture
@@ -30,9 +41,10 @@ Future implementations of the PC-MSAT interface — whether developed here as re
 
 ## Overview
 
-PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of **Structured Orb Dynamics (SOD)**.
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer used to inspect **state-segmented motion traces** produced by geometry-first segmentation methods.
 
-SOD produces **state-segmented motion traces** using fixed geometric criteria.
+One framework capable of producing such traces is **Structured Orb Dynamics (SOD)**.
+
 PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify proceeding to downstream analysis.
 
 This repository documents the **PC-MSAT audit interface** and provides visual artifacts demonstrating its application.
@@ -74,7 +86,7 @@ This layout allows an observer to assess whether sufficient persistence exists t
 Audit outcomes are **binary and conservative**.
 
 | Outcome | Description |
-|--------|-------------|
+|---------|-------------|
 | **Withhold** | Insufficient geometric support under fixed persistence criteria. |
 | **Proceed** | A contiguous segment satisfies the same criteria. |
 
@@ -104,9 +116,28 @@ When motion structure is ambiguous or insufficiently persistent, PC-MSAT **withh
 
 ---
 
+## Audit Pipeline
+
+```
+Trajectory Data
+↓
+Segmentation Method
+(e.g., SOD or other)
+↓
+State-Segmented Motion Trace
+↓
+PC-MSAT Audit
+↓
+PROCEED / WITHHOLD
+```
+
+---
+
 ## Relationship to Structured Orb Dynamics (SOD)
 
-PC-MSAT operates **on outputs** produced by the Structured Orb Dynamics (SOD) framework.
+PC-MSAT operates on **state-segmented motion traces**.
+
+One framework capable of producing such traces is **Structured Orb Dynamics (SOD)**, a geometry-first state-based motion segmentation method.
 
 - SOD defines a **geometry-first, state-based method** for motion analysis
 - PC-MSAT defines **how those outputs are exposed and audited**
@@ -137,12 +168,12 @@ visuals/
   withhold_demo.png
 ```
 
-| Directory  | Contents |
-|------------|----------|
-| `spec/`      | PC-MSAT interface rules and demonstration protocols |
-| `renderer/`  | Minimal reference renderer producing the audit sheet layout |
-| `data/`      | Paired synthetic traces used for reference demonstration |
-| `visuals/`   | Rendered audit sheet artifacts produced from the specification |
+| Directory | Contents |
+|-----------|----------|
+| `spec/` | PC-MSAT interface rules and demonstration protocols |
+| `renderer/` | Minimal reference renderer producing the audit sheet layout |
+| `data/` | Paired synthetic traces used for reference demonstration |
+| `visuals/` | Rendered audit sheet artifacts produced from the specification |
 
 ---
 
@@ -168,7 +199,7 @@ All figures are produced under identical rules and styling so that differences a
 
 ## Reproducibility
 
-The paired demonstration artifacts can be regenerated from the reference renderer using the following commands:
+The paired demonstration artifacts can be regenerated from the reference renderer using the following commands.
 
 **Proceed case:**
 
@@ -206,7 +237,7 @@ These paired artifacts are generated under fixed layout rules, shared renderer c
 
 PC-MSAT is intentionally narrow in scope.
 
-It does **not** attempt to:
+It does not attempt to:
 
 - resolve ambiguity
 - explain motion origin
