@@ -1,4 +1,5 @@
 # PC-MSAT — Pre-Classification Motion Structure Audit Tool
+
 *Disclosure-oriented audit interface for geometry-first motion analysis outputs*
 
 ---
@@ -9,7 +10,7 @@ PC-MSAT is published as an **interface specification and audit layout**, not as 
 
 The purpose of this repository is to document the structure of a **Pre-Classification Motion Structure Audit**, including the signals, visual layout, and decision rubric used to evaluate whether a motion trace provides sufficient geometric persistence to justify proceeding to downstream analysis.
 
-Accordingly, this repository is specification-first. It prioritizes **documentation, audit layout standards, and reproducible visual artifacts**.  
+Accordingly, this repository is specification-first. It prioritizes **documentation, audit layout standards, and reproducible visual artifacts**.
 Any implementation material that may appear in this repository should be understood as a **reference realization of the specification**, not as a canonical or authoritative operational system.
 
 This posture reflects the role PC-MSAT is designed to play within the Structured Orb Dynamics (SOD) ecosystem:
@@ -18,12 +19,12 @@ This posture reflects the role PC-MSAT is designed to play within the Structured
 - PC-MSAT is a **disclosure surface**, not a detection system
 - PC-MSAT is a **methodological contract**, not an operational pipeline component
 
-By publishing the audit interface as a specification rather than a packaged tool, the emphasis remains on **transparency, reproducibility, and interpretive restraint**.  
+By publishing the audit interface as a specification rather than a packaged tool, the emphasis remains on **transparency, reproducibility, and interpretive restraint**.
 The repository defines **what evidence should be exposed and how it should be presented**, allowing observers to assess whether motion structure is sufficiently supported under fixed geometric criteria.
 
 Where such support is absent, the appropriate outcome is **withholding**, rather than forced interpretation.
 
-Future implementations of the PC-MSAT interface—whether developed here as reference material or independently by downstream users—should be understood as **realizations of this audit specification**, not as claims of detection, prediction, or operational decision authority.
+Future implementations of the PC-MSAT interface — whether developed here as reference material or independently by downstream users — should be understood as **realizations of this audit specification**, not as claims of detection, prediction, or operational decision authority.
 
 ---
 
@@ -31,12 +32,30 @@ Future implementations of the PC-MSAT interface—whether developed here as refe
 
 PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer built to inspect the outputs of **Structured Orb Dynamics (SOD)**.
 
-SOD produces **state-segmented motion traces** using fixed geometric criteria.  
+SOD produces **state-segmented motion traces** using fixed geometric criteria.
 PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify proceeding to downstream analysis.
 
 This repository documents the **PC-MSAT audit interface** and provides visual artifacts demonstrating its application.
 
 PC-MSAT is designed to expose whether motion structure is **geometrically and persistently supported** under fixed criteria, or whether such support is **insufficient and therefore withheld**.
+
+---
+
+## Reference Audit Artifacts
+
+The repository includes a paired demonstration of the PC-MSAT audit interface.
+
+These artifacts are produced using identical rules, layout, and thresholds. They differ only in whether the motion trace satisfies the persistence requirement.
+
+### Proceed Case
+
+![Proceed Demo](visuals/proceed_demo.png)
+
+### Withhold Case
+
+![Withhold Demo](visuals/withhold_demo.png)
+
+Both artifacts illustrate how PC-MSAT exposes motion structure while preserving a conservative audit posture.
 
 ---
 
@@ -54,14 +73,12 @@ This layout allows an observer to assess whether sufficient persistence exists t
 
 Audit outcomes are **binary and conservative**.
 
-**Withhold**  
-Insufficient geometric support under fixed persistence criteria.
+| Outcome | Description |
+|--------|-------------|
+| **Withhold** | Insufficient geometric support under fixed persistence criteria. |
+| **Proceed** | A contiguous segment satisfies the same criteria. |
 
-**Proceed**  
-A contiguous segment satisfies the same criteria.
-
-These outcomes are **not measures of success or failure**.  
-They indicate only whether structural support exists for further analysis.
+These outcomes are **not measures of success or failure**. They indicate only whether structural support exists for further analysis.
 
 ---
 
@@ -104,83 +121,84 @@ Its purpose is to demonstrate how restraint and withholding can be preserved at 
 
 ```text
 spec/
+  pcmsat_v0_spec.md
   renderer-blueprint.md
   paired-demo-data-selection-protocol.md
 
+renderer/
+  render_pcmsat_audit.py
+
+data/
+  proceed_demo_trace.csv
+  withhold_demo_trace.csv
+
 visuals/
-  audit sheet artifacts
+  proceed_demo.png
+  withhold_demo.png
 ```
 
-The `spec` directory defines the PC-MSAT interface rules and demonstration protocols.
-
-The `visuals` directory contains rendered audit sheet artifacts produced according to those specifications.
-
-See `spec/renderer-blueprint.md` for the audit sheet rendering contract, and `spec/paired-demo-data-selection-protocol.md` for how the paired Proceed/Withhold traces are selected.
+| Directory  | Contents |
+|------------|----------|
+| `spec/`      | PC-MSAT interface rules and demonstration protocols |
+| `renderer/`  | Minimal reference renderer producing the audit sheet layout |
+| `data/`      | Paired synthetic traces used for reference demonstration |
+| `visuals/`   | Rendered audit sheet artifacts produced from the specification |
 
 ---
 
 ## PC-MSAT Audit Sheet
 
-Each audit artifact follows a fixed layout designed for transparency.
+Each audit artifact follows a fixed layout designed for transparency. The sheet contains:
 
-The sheet contains:
-
-**State-segmented trajectory**  
+### State-Segmented Trajectory
 Spatial motion trace rendered under equal-aspect constraints.
 
-**Supporting geometric signal**  
+### Supporting Geometric Signal
 Raw curvature κ(t) plotted against observation index.
 
-**Persistence panel**  
+### Persistence Panel
 A compact visualization of contiguous segment lengths relative to the minimum persistence requirement.
 
-**Audit outcome**  
+### Audit Outcome
 A conservative result indicating whether interpretation should proceed or be withheld.
 
 All figures are produced under identical rules and styling so that differences arise only from the underlying motion data.
 
 ---
 
-## Visual Artifacts in This Repository
+## Reproducibility
 
-This repository contains a paired demonstration set:
+The paired demonstration artifacts can be regenerated from the reference renderer using the following commands:
 
-**Withhold Case**  
-No contiguous segment satisfies conservative geometric and persistence criteria.
+**Proceed case:**
 
-**Proceed Case**  
-A contiguous segment satisfies the same criteria.
+```bash
+python renderer/render_pcmsat_audit.py \
+  --csv data/proceed_demo_trace.csv \
+  --trace-id DEMO_PROCEED \
+  --source synthetic \
+  --case PROCEED \
+  --cadence 1s \
+  --n-shown 15 \
+  --window-rule "first 15 observations" \
+  --out visuals/proceed_demo.png
+```
 
-Both artifacts:
+**Withhold case:**
 
-- are generated from fixed rules
-- share identical layout and renderer constraints
-- display one supporting signal (raw curvature)
-- differ only in audit result
+```bash
+python renderer/render_pcmsat_audit.py \
+  --csv data/withhold_demo_trace.csv \
+  --trace-id DEMO_WITHHOLD \
+  --source synthetic \
+  --case WITHHOLD \
+  --cadence 1s \
+  --n-shown 15 \
+  --window-rule "first 15 observations" \
+  --out visuals/withhold_demo.png
+```
 
-These artifacts illustrate the existence of a pre-classification audit step.
-
-## PC-MSAT Reference Demonstration
-
-This repository contains a reference demonstration of the **Pre-Classification Motion Structure Audit Tool (PC-MSAT)**.
-
-PC-MSAT performs a conservative structural audit of motion traces before downstream classification or analysis.
-
-The reference renderer produces a deterministic audit sheet consisting of:
-
-1. State-segmented trajectory  
-2. Raw curvature signal  
-3. Persistence analysis  
-4. Binary audit outcome
-
-Example outputs:
-
-- `visuals/withhold_demo.png`
-- `visuals/proceed_demo.png`
-
-Specification:
-
-`spec/pcmsat_v0_spec.md`
+These paired artifacts are generated under fixed layout rules, shared renderer constraints, and the same persistence threshold (`MIN_RUN = 3`).
 
 ---
 
@@ -188,7 +206,7 @@ Specification:
 
 PC-MSAT is intentionally narrow in scope.
 
-It does not attempt to:
+It does **not** attempt to:
 
 - resolve ambiguity
 - explain motion origin
@@ -198,7 +216,7 @@ It does not attempt to:
 
 Its sole function is to answer a constrained question:
 
-> Is there sufficient, persistence-supported geometric structure to justify proceeding — or should interpretation be withheld?
+> *Is there sufficient, persistence-supported geometric structure to justify proceeding — or should interpretation be withheld?*
 
 ---
 
@@ -206,7 +224,7 @@ Its sole function is to answer a constrained question:
 
 All documentation, text, and visual artifacts in this repository are licensed under:
 
-**Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International**  
+**Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International**
 (CC BY-NC-ND 4.0)
 
 See the `LICENSE` file for full terms.
@@ -223,7 +241,7 @@ Use of these materials does not imply endorsement, correctness, or applicability
 
 ## Status
 
-PC-MSAT is provided as a reference demonstration interface.
+PC-MSAT is provided as a **reference demonstration interface**.
 
 It is not a packaged software product and is not expected to evolve rapidly.
 
