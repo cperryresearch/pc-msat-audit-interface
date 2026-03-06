@@ -149,16 +149,13 @@ def draw_state_colored_trajectory(
 
     for run_idx, s, start, length in runs:
         end = start + length
-
-        # draw trajectory segment
         ax.plot(x[start:end], y[start:end], color=SOD_COLORS[s], linewidth=2)
 
-        # compute midpoint for index label
+        # midpoint for index marker
         mid = start + length // 2
         xm = x[mid]
         ym = y[mid]
 
-        # run index marker
         ax.text(
             xm,
             ym,
@@ -223,17 +220,21 @@ def draw_curvature_panel(ax, kappa: np.ndarray, boundaries: List[int]) -> None:
 def draw_persistence_panel(
     ax_top, ax_bottom, runs: List[Tuple[int, str, int, int]], min_run: int
 ) -> None:
+    """
+    Panel 3: Persistence
+    - Top (decision layer): contiguous run lengths, state-agnostic (neutral bars), compared to MIN_RUN.
+    - Bottom (diagnostic layer): the SAME runs, regrouped by state for readability, preserving raw run identity.
+      Each diagnostic bar is labeled "R#=len".
+    Decision basis is contiguous run length only.
+    """
+
     def _annotate_barh(ax, x: float, y: float, text: str, pad: float = 0.08) -> None:
-        """
-        Place a small label just to the right of a bar end.
-        Assumes x-limits are already set to include some breathing room.
-        """
         ax.text(x + pad, y, text, va="center", ha="left", fontsize=8, alpha=0.9)
 
-    # Shared x-limit so both panels align and annotations have room.
+    # Shared x-limit (alignment + breathing room)
     run_lengths = [length for (_, _, _, length) in runs]
     max_len = max(run_lengths, default=0)
-    xmax = max(max_len, min_run) + 1.25  # breathing room for labels
+    xmax = max(max_len, min_run) + 1.75  # slightly more room for R#=len labels
     if xmax <= 0:
         xmax = 1.5
 
@@ -242,69 +243,94 @@ def draw_persistence_panel(
     # -----------------------------
     y = np.arange(len(run_lengths))
 
-    colors = ["#2F7D4A" if length >= min_run else "#444444" for length in run_lengths]
-
-    ax_top.barh(y, run_lengths, color=colors, alpha=0.9)
+    ax_top.barh(y, run_lengths, color="#444444", alpha=0.9)
     ax_top.axvline(min_run, color="#444444", linewidth=1.0, alpha=0.6)
     ax_top.set_xlim(0, xmax)
 
     ax_top.set_yticks(y)
     ax_top.set_yticklabels([f"Run {i+1}" for i in y], fontsize=8)
-    ax_top.set_xlabel("run length (observations)")
+
+    # Force top x-axis completely off
+    ax_top.set_xlabel("")
+    ax_top.set_xticks([])
+    ax_top.tick_params(
+        axis="x",
+        which="both",
+        bottom=False,
+        top=False,
+        labelbottom=False,
+        labeltop=False,
+    )
+
     ax_top.set_title(
         f"Contiguous Run Lengths (Decision Layer) — MIN_RUN = {min_run}",
-        fontsize=10,
+        fontsize=9,
         loc="left",
+        pad=8,
     )
     ax_top.grid(axis="x", linestyle="-", linewidth=0.6, alpha=0.15)
     ax_top.invert_yaxis()
 
+    # Annotate decision bars with run length; mark threshold-crossing runs explicitly.
+    for i, length in enumerate(run_lengths):
+        if length > 0:
+            _annotate_barh(
+                ax_top, float(length), float(y[i]), str(int(length)), pad=0.08
+            )
+        if length >= min_run:
+            _annotate_barh(ax_top, float(length), float(y[i]), "≥MIN_RUN", pad=0.30)
+
     # ----------------------------------------
     # Diagnostic layer (state-typed; context only)
-    # Grouped by state for readability; raw runs preserved.
+    # Grouped by state; RAW runs preserved via run_idx.
+    # Each bar label: R#=len
     # ----------------------------------------
-    by_state: Dict[str, List[int]] = {s: [] for s in ALLOWED_STATES}
-    for _, s, _, length in runs:
-        by_state[s].append(length)
+    by_state: Dict[str, List[Tuple[int, int]]] = {s: [] for s in ALLOWED_STATES}
+    for run_idx, s, _, length in runs:
+        by_state[s].append((run_idx, length))
 
     diag_states: List[str] = []
+    diag_run_ids: List[int] = []
     diag_lengths: List[int] = []
     diag_labels: List[str] = []
 
     for s in ALLOWED_STATES:
-        lengths = by_state[s]
-        if not lengths:
+        items = by_state[s]
+        if not items:
             continue
 
-        for i, length in enumerate(lengths):
+        for i, (run_idx, length) in enumerate(items):
             diag_states.append(s)
+            diag_run_ids.append(run_idx)
             diag_lengths.append(length)
             diag_labels.append(s if i == 0 else "")
 
         # spacer row between state groups (transparent)
-        diag_states.append("Straight")  # placeholder; will be fully transparent
+        diag_states.append("Straight")
+        diag_run_ids.append(-1)
         diag_lengths.append(0)
         diag_labels.append("")
 
     # drop trailing spacer
     if diag_lengths and diag_lengths[-1] == 0:
         diag_states.pop()
+        diag_run_ids.pop()
         diag_lengths.pop()
         diag_labels.pop()
 
     y2 = np.arange(len(diag_lengths))
 
-    colors: List[str] = []
+    diag_colors: List[str] = []
     alphas: List[float] = []
     for s, length in zip(diag_states, diag_lengths):
         if length == 0:
-            colors.append("#FFFFFF")
+            diag_colors.append("#FFFFFF")
             alphas.append(0.0)
         else:
-            colors.append(SOD_COLORS[s])
+            diag_colors.append(SOD_COLORS[s])
             alphas.append(0.95)
 
-    bars = ax_bottom.barh(y2, diag_lengths, color=colors)
+    bars = ax_bottom.barh(y2, diag_lengths, color=diag_colors)
     for bar, a in zip(bars, alphas):
         bar.set_alpha(a)
 
@@ -313,26 +339,41 @@ def draw_persistence_panel(
 
     ax_bottom.set_yticks(y2)
     ax_bottom.set_yticklabels(diag_labels, fontsize=8)
-    ax_bottom.set_xlabel("run length (observations)")
+
+    # Force bottom axis to own the x-axis labels/ticks
+    ax_bottom.set_xlabel("run length (observations)", labelpad=8)
+    ax_bottom.tick_params(
+        axis="x",
+        which="both",
+        top=False,
+        labeltop=False,
+        bottom=True,
+        labelbottom=True,
+        pad=6,
+    )
+
     ax_bottom.set_title(
-        f"Diagnostic Persistence (same runs grouped by state — non-decisional) — MIN_RUN = {min_run}",
-        fontsize=10,
+        f"Diagnostic Persistence (state-grouped runs; non-decisional) — MIN_RUN = {min_run}",
+        fontsize=9,
         loc="left",
+        pad=10,
     )
     ax_bottom.grid(axis="x", linestyle="-", linewidth=0.6, alpha=0.15)
     ax_bottom.invert_yaxis()
 
-    # ---- NEW: annotate run lengths on diagnostic bars (skip spacer rows) ----
-    for yi, length in zip(y2, diag_lengths):
-        if length > 0:
-            _annotate_barh(ax_bottom, float(length), float(yi), str(int(length)))
+    # Annotate diagnostic bars as R#=len (skip spacer rows).
+    for yi, run_id, length in zip(y2, diag_run_ids, diag_lengths):
+        if length > 0 and run_id >= 0:
+            label = f"R{run_id+1}={int(length)}"
+            _annotate_barh(ax_bottom, float(length), float(yi), label, pad=0.08)
 
+    # footnote lower + slightly smaller
     ax_bottom.text(
         0.0,
-        -0.35,
+        -0.68,
         "Decision uses contiguous run length only. Diagnostic layer preserves raw runs (grouped by state for readability).",
         transform=ax_bottom.transAxes,
-        fontsize=8,
+        fontsize=7.2,
         va="top",
         ha="left",
         alpha=0.85,
@@ -385,8 +426,8 @@ def render_audit_sheet(df: pd.DataFrame, meta: Meta, out_path: Path) -> None:
     gs = GridSpec(
         nrows=5,
         ncols=1,
-        height_ratios=[0.9, 4, 2, 2, 1],
-        hspace=0.55,
+        height_ratios=[0.9, 4, 2.2, 2.6, 1],
+        hspace=0.85,
     )
 
     ax_header = fig.add_subplot(gs[0])
@@ -412,12 +453,11 @@ def render_audit_sheet(df: pd.DataFrame, meta: Meta, out_path: Path) -> None:
     ax2.set_title("Raw Signed Curvature κ(t)", fontsize=11, loc="left")
     draw_curvature_panel(ax2, kappa, boundaries)
 
-    gs_p3 = gs[3].subgridspec(2, 1, height_ratios=[1, 1], hspace=0.7)
+    gs_p3 = gs[3].subgridspec(2, 1, height_ratios=[1, 1], hspace=0.90)
     ax3a = fig.add_subplot(gs_p3[0])
     ax3b = fig.add_subplot(gs_p3[1])
 
     ax3a.set_title("Persistence Analysis", fontsize=11, loc="left", pad=14)
-
     draw_persistence_panel(ax3a, ax3b, runs, meta.min_run)
 
     ax4 = fig.add_subplot(gs[4])
