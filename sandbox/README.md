@@ -8,9 +8,7 @@ This environment allows controlled experimentation with input traces while prese
 
 The sandbox operates under the governance defined in:
 
-```
-SANDBOX_CHARTER.md
-```
+`SANDBOX_CHARTER.md`
 
 Users should review the charter before conducting sandbox experiments.
 
@@ -69,9 +67,7 @@ Outputs generated here are **exploratory artifacts only** and carry no canonical
 
 All sandbox experiments must use the **canonical PC-MSAT audit renderer** defined in the repository:
 
-```
-renderer/render_pcmsat_audit.py
-```
+`renderer/render_pcmsat_audit.py`
 
 The sandbox must **not introduce alternative renderer logic**.
 
@@ -104,6 +100,24 @@ They do not replace or modify the canonical materials contained elsewhere in the
 - The documented audit protocol
 
 Promotion of any sandbox artifact to canonical status must occur through a separate, explicit revision process.
+
+---
+
+## Current Sandbox Demonstration Suite
+
+The sandbox currently includes a small demonstration set used to illustrate how the PC-MSAT audit interface behaves across different motion structures.
+
+| Trace | Structure | Purpose | Expected Outcome |
+|------|-----------|---------|------------------|
+| Trace 001 | Straight persistent | Real trajectory baseline | PROCEED |
+| Trace 002 | Persistent curved motion | Demonstrates curvature with persistence | PROCEED |
+| Trace 003 | Straight → Turn → Straight | Persistence across regime transitions | PROCEED |
+| Trace 004 | Fragmented short runs | Insufficient persistence example | WITHHOLD |
+| Trace 005 | Ordered short runs | Near-threshold persistence failure | WITHHOLD |
+
+These traces form a minimal teaching sequence demonstrating how persistence governs the audit decision.
+
+Additional sandbox traces may be introduced to explore further edge cases or instructional examples.
 
 ---
 
