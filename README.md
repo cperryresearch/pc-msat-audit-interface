@@ -15,6 +15,18 @@ PC-MSAT prioritizes restraint: when geometric persistence is insufficient, the a
 
 ---
 
+### Repository Overview
+
+| Section | Purpose |
+|--------|--------|
+| **Reference Audit Artifacts** | Canonical demonstration of PROCEED / WITHHOLD outcomes |
+| **Sandbox Demonstrations** | Experimental traces illustrating persistence behavior |
+| **Specification** | Interface rules and audit layout definition |
+| **Renderer** | Minimal reference renderer producing audit sheets |
+| **Data** | Paired demonstration traces used for reference artifacts |
+
+---
+
 ## Overview
 
 PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer used to inspect **state-segmented motion traces** produced by geometry-first segmentation methods.
