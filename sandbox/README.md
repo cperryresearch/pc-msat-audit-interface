@@ -1,5 +1,11 @@
 # PC-MSAT Sandbox
 
+> This directory contains the **PC-MSAT Sandbox**, a bounded experimental workspace used to explore how the PC-MSAT audit interface behaves under varied motion trace conditions.
+>
+> For the canonical audit interface and reference artifacts, see the repository front door:
+>
+> `../README.md`
+
 ## Overview
 
 The **PC-MSAT Sandbox** is a bounded experimental workspace used to explore how the existing PC-MSAT audit interface behaves when applied to varied motion traces under fixed constraints.
