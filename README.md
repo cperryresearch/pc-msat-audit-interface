@@ -15,27 +15,75 @@ PC-MSAT prioritizes restraint: when geometric persistence is insufficient, the a
 
 ---
 
+## Overview
+
+PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer used to inspect **state-segmented motion traces** produced by geometry-first segmentation methods.
+
+One framework capable of producing such traces is **Structured Orb Dynamics (SOD)**.
+
+PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify proceeding to downstream analysis.
+
+This repository documents the **PC-MSAT audit interface** and provides visual artifacts demonstrating its application.
+
+PC-MSAT is designed to expose whether motion structure is **geometrically and persistently supported** under fixed criteria, or whether such support is **insufficient and therefore withheld**.
+
+---
+
+## PC-MSAT Audit Layout
+
+```text
 ┌─────────────────────────────────────────────┐
 │ Panel 1 — State-Segmented Motion Trace      │
 │                                             │
-│ Equal-aspect spatial trajectory showing    │
-│ state segmentation along the motion path.  │
+│ Equal-aspect spatial trajectory showing     │
+│ state segmentation along the motion path.   │
 ├─────────────────────────────────────────────┤
 │ Panel 2 — Raw Curvature κ(t)                │
 │                                             │
-│ Supporting geometric signal plotted        │
-│ against observation index.                 │
+│ Supporting geometric signal plotted         │
+│ against observation index.                  │
 ├─────────────────────────────────────────────┤
 │ Panel 3 — Persistence Panel                 │
 │                                             │
-│ Contiguous segment run lengths relative    │
-│ to the minimum persistence requirement.    │
+│ Contiguous segment run lengths relative     │
+│ to the minimum persistence requirement.     │
 ├─────────────────────────────────────────────┤
-│ Panel 4 — Audit Outcome                    │
+│ Panel 4 — Audit Outcome                     │
 │                                             │
-│ PROCEED  — persistence threshold satisfied │
-│ WITHHOLD — insufficient geometric support  │
+│ PROCEED  — persistence threshold satisfied  │
+│ WITHHOLD — insufficient geometric support   │
 └─────────────────────────────────────────────┘
+```
+
+---
+
+## Reference Audit Artifacts
+
+The repository includes a paired demonstration of the PC-MSAT audit interface.
+
+These artifacts are produced using identical rules, layout, and thresholds. They differ only in whether the motion trace provides sufficient persistence support to justify proceeding.
+
+### Withhold Case
+
+![Withhold Demo](visuals/withhold_demo.png)
+
+### Proceed Case
+
+![Proceed Demo](visuals/proceed_demo.png)
+
+Both artifacts illustrate how PC-MSAT exposes motion structure while preserving a conservative audit posture.
+
+---
+
+## Sandbox Demonstrations
+
+A bounded experimental sandbox is available within this repository for exploring how the PC-MSAT audit interface behaves across varied motion traces under fixed constraints.
+
+The sandbox contains a small demonstration suite illustrating how persistence governs the **PROCEED / WITHHOLD** decision logic while preserving the canonical audit posture.
+
+See:
+
+`sandbox/README.md`
 
 ---
 
