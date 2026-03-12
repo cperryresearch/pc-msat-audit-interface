@@ -137,24 +137,6 @@ PC-MSAT is designed to expose whether motion structure is **geometrically and pe
 
 ---
 
-## Reference Audit Artifacts
-
-The repository includes a paired demonstration of the PC-MSAT audit interface.
-
-These artifacts are produced using identical rules, layout, and thresholds. They differ only in whether the motion trace provides sufficient persistence support to justify proceeding.
-
-### Withhold Case
-
-![Withhold Demo](visuals/withhold_demo.png)
-
-### Proceed Case
-
-![Proceed Demo](visuals/proceed_demo.png)
-
-Both artifacts illustrate how PC-MSAT exposes motion structure while preserving a conservative audit posture.
-
----
-
 ## What PC-MSAT Is
 
 PC-MSAT is:
