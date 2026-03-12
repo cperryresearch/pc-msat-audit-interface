@@ -1,0 +1,9 @@
+t,x,y,state
+0,0,0,Straight
+1,1,0,Straight
+2,2,1,Turn
+3,2,2,Turn
+4,3,3,Straight
+5,4,3,Straight
+6,5,2,Turn
+7,5,1,Turn
