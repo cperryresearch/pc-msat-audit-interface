@@ -1,2 +1,9 @@
 __pycache__/
 *.pyc
+
+# Sandbox outputs (prevent accidental heavy exports)
+sandbox/sandbox_outputs/*.pdf
+sandbox/sandbox_outputs/*.tif
+sandbox/sandbox_outputs/*.tiff
+sandbox/sandbox_outputs/*.psd
+sandbox/sandbox_outputs/*.zip
