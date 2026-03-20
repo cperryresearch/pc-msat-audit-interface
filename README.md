@@ -13,6 +13,8 @@ PC-MSAT produces one of two outcomes:
 
 PC-MSAT prioritizes restraint: when geometric persistence is insufficient, the audit explicitly withholds downstream analysis.
 
+For a compact explanation of the underlying audit logic, see [Phase 1 Logic Note](docs/phase1_logic_note.md).
+
 ---
 
 ### Repository Overview
@@ -120,20 +122,6 @@ The repository defines **what evidence should be exposed and how it should be pr
 Where such support is absent, the appropriate outcome is **withholding**, rather than forced interpretation.
 
 Future implementations of the PC-MSAT interface — whether developed here as reference material or independently by downstream users — should be understood as **realizations of this audit specification**, not as claims of detection, prediction, or operational decision authority.
-
----
-
-## Overview
-
-PC-MSAT (Pre-Classification Motion Structure Audit Tool) is an interface layer used to inspect **state-segmented motion traces** produced by geometry-first segmentation methods.
-
-One framework capable of producing such traces is **Structured Orb Dynamics (SOD)**.
-
-PC-MSAT presents those traces in an **audit context** to determine whether sufficient structure exists to justify proceeding to downstream analysis.
-
-This repository documents the **PC-MSAT audit interface** and provides visual artifacts demonstrating its application.
-
-PC-MSAT is designed to expose whether motion structure is **geometrically and persistently supported** under fixed criteria, or whether such support is **insufficient and therefore withheld**.
 
 ---
 
