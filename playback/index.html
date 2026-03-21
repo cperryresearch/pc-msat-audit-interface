@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PC-MSAT Playback v1</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #ffffff;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas" width="500" height="500"></canvas>
+<div style="margin-top: 12px; display: flex; gap: 8px; align-items: center;">
+  <button id="playBtn">Play</button>
+  <button id="pauseBtn">Pause</button>
+  <button id="replayBtn">Replay</button>
+  <input id="timelineSlider" type="range" min="0" max="3" value="0" step="1" />
+</div>
+
+<script>
+  let currentIndex = 0;
+  let playbackTimer = null;
+
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const playBtn = document.getElementById("playBtn");
+  const pauseBtn = document.getElementById("pauseBtn");
+  const replayBtn = document.getElementById("replayBtn");
+  const timelineSlider = document.getElementById("timelineSlider");
+
+  const trace = [
+    { t: 0, x: 0.0, y: 0.0, state: "Straight" },
+    { t: 1, x: 1.0, y: 0.2, state: "Straight" },
+    { t: 2, x: 2.0, y: 0.9, state: "Turn" },
+    { t: 3, x: 3.0, y: 0.4, state: "Turn" }
+  ];
+
+  const xs = trace.map(p => p.x);
+  const ys = trace.map(p => p.y);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const padding = 40;
+
+  const width = canvas.width - padding * 2;
+  const height = canvas.height - padding * 2;
+
+  const dataWidth = maxX - minX;
+  const dataHeight = maxY - minY;
+
+  const scale = Math.min(width / dataWidth, height / dataHeight);
+
+  const offsetX = padding + (width - dataWidth * scale) / 2;
+  const offsetY = padding + (height - dataHeight * scale) / 2;
+
+  function mapPoint(p) {
+    return {
+      x: offsetX + (p.x - minX) * scale,
+      y: canvas.height - (offsetY + (p.y - minY) * scale)
+    };
+  }
+
+  function getStateColor(state) {
+  switch (state) {
+    case "Straight":
+      return "#4A90E2"; // muted blue
+    case "Turn":
+      return "#E3A008"; // amber
+    case "Hover":
+      return "#2E9F6B"; // green
+    case "Orb":
+      return "#7E6E9E"; // muted violet
+    default:
+      return "#444444"; // safe fallback
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  timelineSlider.value = currentIndex;
+
+  if (currentIndex === 0) {
+    const p = mapPoint(trace[0]);
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#444";
+    ctx.fill();
+
+    return;
+  }
+
+  for (let i = 1; i <= currentIndex; i++) {
+    const p0 = mapPoint(trace[i - 1]);
+    const p1 = mapPoint(trace[i]);
+
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+
+    ctx.strokeStyle = getStateColor(trace[i].state);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+}
+
+timelineSlider.addEventListener("input", () => {
+  pausePlayback();
+  currentIndex = Number(timelineSlider.value);
+  draw();
+});
+  
+  function startPlayback() {
+    if (playbackTimer) {
+      clearInterval(playbackTimer);
+    }
+
+    playbackTimer = setInterval(() => {
+      if (currentIndex < trace.length - 1) {
+        currentIndex++;
+        draw();
+      } else {
+        clearInterval(playbackTimer);
+        playbackTimer = null;
+      }
+    }, 500);
+  }
+
+  function pausePlayback() {
+    if (playbackTimer) {
+      clearInterval(playbackTimer);
+      playbackTimer = null;
+    }
+  }
+
+  playBtn.addEventListener("click", () => {
+    startPlayback();
+  });
+
+  pauseBtn.addEventListener("click", () => {
+    pausePlayback();
+  });
+
+  replayBtn.addEventListener("click", () => {
+    currentIndex = 0;
+    draw();
+    startPlayback();
+  });
+
+  draw();
+  startPlayback();
+</script>
+
+</body>
+</html>
