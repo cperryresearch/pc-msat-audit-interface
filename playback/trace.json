@@ -1,0 +1,6 @@
+[
+  { "t": 0, "x": 0.0, "y": 0.0, "state": "Straight" },
+  { "t": 1, "x": 1.0, "y": 0.2, "state": "Straight" },
+  { "t": 2, "x": 2.0, "y": 0.9, "state": "Turn" },
+  { "t": 3, "x": 3.0, "y": 0.4, "state": "Turn" }
+]
