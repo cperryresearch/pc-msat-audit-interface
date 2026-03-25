@@ -25,9 +25,11 @@ from io_utils import (
 )
 
 from schema_utils import (
+    ArtifactValidationError,
     assemble_state_segmented_trace,
     build_artifact_header,
     build_point_records,
+    validate_artifact_consistency_v0,
 )
 
 from state_logic import (
@@ -180,6 +182,14 @@ def main() -> None:
         "state_runs": state_runs,
     }
 
+    validation_errors = validate_artifact_consistency_v0(artifact)
+
+    if validation_errors:
+        raise ArtifactValidationError(
+            "Canonical v0 artifact validation failed.",
+            validation_errors,
+        )
+
     write_json(artifact, output_path)
 
     artifact_id = config.get("artifact_id", "[missing artifact_id]")
@@ -287,4 +297,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except ArtifactValidationError as exc:
+        print(exc.summary)
+        for error in exc.errors:
+            print(error)
+        raise SystemExit(1)
