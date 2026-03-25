@@ -1,0 +1,214 @@
+{
+  "artifact": {
+    "artifact_id": "test_trace_001_v0",
+    "artifact_type": "state_segmented_trace",
+    "ruleset_version": "v0"
+  },
+  "provenance": {
+    "source_id": "test_trace_001",
+    "input_path": "state_constructor\\input\\test_trace_001.csv",
+    "output_path": "C:\\Users\\cperr\\OneDrive\\Desktop\\PC-MSAT\\pc-msat-audit-interface\\state_constructor\\output\\test_trace_001_state_segmented_trace.json"
+  },
+  "input_spec": {
+    "projection": "planar",
+    "cadence_seconds": 1.0,
+    "n_points": 10
+  },
+  "processing": {
+    "smoothing": {
+      "method": "fixed_moving_average",
+      "window": 3
+    },
+    "derivatives": {
+      "method": "finite_difference"
+    },
+    "masking": {
+      "speed_min_for_curvature": 0.05
+    },
+    "persistence": {
+      "min_run": 3
+    }
+  },
+  "state_model": {
+    "activated_states": [
+      "Straight",
+      "Turn"
+    ],
+    "deferred_states": [
+      "Hover",
+      "Orb"
+    ]
+  },
+  "points": [
+    {
+      "t": 0.0,
+      "x": 0.0,
+      "y": 0.0,
+      "x_smooth": 0.5,
+      "y_smooth": 0.0,
+      "dx_dt": 0.5,
+      "dy_dt": 0.0,
+      "speed": 0.5,
+      "d2x_dt2": 0.25,
+      "d2y_dt2": 0.016666666666666666,
+      "curvature": 0.06666666666666667,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 1.0,
+      "x": 1.0,
+      "y": 0.0,
+      "x_smooth": 1.0,
+      "y_smooth": 0.0,
+      "dx_dt": 0.75,
+      "dy_dt": 0.016666666666666666,
+      "speed": 0.75018516232846,
+      "d2x_dt2": 0.25,
+      "d2y_dt2": 0.041666666666666664,
+      "curvature": 0.06415000647488119,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 2.0,
+      "x": 2.0,
+      "y": 0.0,
+      "x_smooth": 2.0,
+      "y_smooth": 0.03333333333333333,
+      "dx_dt": 1.0,
+      "dy_dt": 0.08333333333333333,
+      "speed": 1.0034662148993578,
+      "d2x_dt2": 0.10833333333333339,
+      "d2y_dt2": 0.10833333333333334,
+      "curvature": 0.09828002995104676,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 3.0,
+      "x": 3.0,
+      "y": 0.1,
+      "x_smooth": 3.0,
+      "y_smooth": 0.16666666666666666,
+      "dx_dt": 0.9666666666666668,
+      "dy_dt": 0.23333333333333334,
+      "speed": 0.9944289260117533,
+      "d2x_dt2": -0.08333333333333326,
+      "d2y_dt2": 0.18333333333333335,
+      "curvature": 0.19999056673863433,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 4.0,
+      "x": 4.0,
+      "y": 0.4,
+      "x_smooth": 3.9333333333333336,
+      "y_smooth": 0.5,
+      "dx_dt": 0.8333333333333335,
+      "dy_dt": 0.45,
+      "speed": 0.9470715096783583,
+      "d2x_dt2": -0.19166666666666665,
+      "d2y_dt2": 0.22499999999999995,
+      "curvature": 0.3222595612478772,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 5.0,
+      "x": 4.8,
+      "y": 1.0,
+      "x_smooth": 4.666666666666667,
+      "y_smooth": 1.0666666666666667,
+      "dx_dt": 0.5833333333333335,
+      "dy_dt": 0.6833333333333332,
+      "speed": 0.8984554647962371,
+      "d2x_dt2": -0.28333333333333344,
+      "d2y_dt2": 0.2166666666666667,
+      "curvature": 0.44122520598421977,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 6.0,
+      "x": 5.2,
+      "y": 1.8,
+      "x_smooth": 5.1000000000000005,
+      "y_smooth": 1.8666666666666665,
+      "dx_dt": 0.2666666666666666,
+      "dy_dt": 0.8833333333333334,
+      "speed": 0.9227073690444274,
+      "d2x_dt2": -0.3166666666666671,
+      "d2y_dt2": 0.16666666666666669,
+      "curvature": 0.4126448109162227,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 7.0,
+      "x": 5.3,
+      "y": 2.8,
+      "x_smooth": 5.2,
+      "y_smooth": 2.8333333333333335,
+      "dx_dt": -0.05000000000000071,
+      "dy_dt": 1.0166666666666666,
+      "speed": 1.0178954323068314,
+      "d2x_dt2": -0.22083333333333344,
+      "d2y_dt2": -0.03750000000000003,
+      "curvature": 0.2146572747873013,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 8.0,
+      "x": 5.1,
+      "y": 3.9,
+      "x_smooth": 4.999999999999999,
+      "y_smooth": 3.9,
+      "dx_dt": -0.17500000000000027,
+      "dy_dt": 0.8083333333333333,
+      "speed": 0.8270597183866337,
+      "d2x_dt2": -0.04999999999999938,
+      "d2y_dt2": -0.23333333333333317,
+      "curvature": 0.14361928558198273,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    },
+    {
+      "t": 9.0,
+      "x": 4.6,
+      "y": 5.0,
+      "x_smooth": 4.85,
+      "y_smooth": 4.45,
+      "dx_dt": -0.14999999999999947,
+      "dy_dt": 0.5500000000000003,
+      "speed": 0.5700877125495691,
+      "d2x_dt2": 0.0250000000000008,
+      "d2y_dt2": -0.2583333333333331,
+      "curvature": 0.13493200297030877,
+      "curvature_masked": false,
+      "candidate_state": null,
+      "state": null,
+      "support_status": "unassigned"
+    }
+  ]
+}

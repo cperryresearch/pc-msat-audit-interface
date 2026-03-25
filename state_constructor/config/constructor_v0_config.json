@@ -1,0 +1,20 @@
+{
+  "artifact_id": "test_trace_001_v0",
+  "source_id": "test_trace_001",
+  "cadence_seconds": 1.0,
+  "projection": "planar",
+  "ruleset_version": "v0",
+  "smoothing": {
+    "method": "fixed_moving_average",
+    "window": 3
+  },
+  "derivatives": {
+    "method": "finite_difference"
+  },
+  "masking": {
+    "speed_min_for_curvature": 0.05
+  },
+  "persistence": {
+    "min_run": 3
+  }
+}

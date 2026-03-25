@@ -39,6 +39,14 @@ Example:
 - Standalone mode: `startStandalonePlayback()` loads `trace.json`
 - Embedded mode: `startEmbeddedPlayback(trace)` accepts precomputed trace data from a parent interface
 
+## Embedded Use
+
+In embedded mode, the parent provides the trace; the viewer renders it. Playback Tool v1 does not perform audit logic, persistence evaluation, inference, or decision communication.
+
+## Embedded Trace Shape
+
+In embedded mode, Playback Tool v1 expects a non-empty ordered array of points of the form `{ x, y, state }`, where `x` and `y` are finite numbers and `state` is one of `Straight`, `Turn`, `Hover`, or `Orb`.
+
 ## Rendering Notes
 
 - fixed equal-aspect geometric presentation
