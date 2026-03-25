@@ -37,6 +37,30 @@ from state_logic import (
 )
 
 
+def validate_v0_point_vocab(points: list[dict]) -> None:
+    allowed_candidate_states = {"Straight", "Turn", None}
+    allowed_final_states = {"Straight", "Turn", None}
+    allowed_support_status = {"accepted", "withheld", "unassigned"}
+
+    for idx, point in enumerate(points):
+        candidate_state = point.get("candidate_state")
+        final_state = point.get("state")
+        support_status = point.get("support_status")
+
+        if candidate_state not in allowed_candidate_states:
+            raise ValueError(
+                f"Invalid candidate_state at point index {idx}: {candidate_state!r}"
+            )
+
+        if final_state not in allowed_final_states:
+            raise ValueError(f"Invalid state at point index {idx}: {final_state!r}")
+
+        if support_status not in allowed_support_status:
+            raise ValueError(
+                f"Invalid support_status at point index {idx}: {support_status!r}"
+            )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="State-Segmented Trace Constructor v0")
     parser.add_argument(
@@ -121,6 +145,7 @@ def main() -> None:
     )
 
     resolved_points = apply_persistence_acceptance(candidate_points, min_run)
+    validate_v0_point_vocab(resolved_points)
 
     candidate_runs = summarize_contiguous_runs(candidate_points, "candidate_state")
     state_runs = summarize_contiguous_runs(resolved_points, "state")
@@ -149,6 +174,11 @@ def main() -> None:
         artifact_header=artifact_header,
         point_records=point_records,
     )
+
+    artifact["run_summary"] = {
+        "candidate_state_runs": candidate_runs,
+        "state_runs": state_runs,
+    }
 
     write_json(artifact, output_path)
 

@@ -26,7 +26,7 @@
       "speed_min_for_curvature": 0.05
     },
     "persistence": {
-      "min_run": 4
+      "min_run": 3
     }
   },
   "state_model": {
@@ -54,8 +54,8 @@
       "curvature": 0.06666666666666667,
       "curvature_masked": false,
       "candidate_state": "Straight",
-      "state": null,
-      "support_status": "withheld"
+      "state": "Straight",
+      "support_status": "accepted"
     },
     {
       "t": 1.0,
@@ -71,8 +71,8 @@
       "curvature": 0.06415000647488119,
       "curvature_masked": false,
       "candidate_state": "Straight",
-      "state": null,
-      "support_status": "withheld"
+      "state": "Straight",
+      "support_status": "accepted"
     },
     {
       "t": 2.0,
@@ -88,8 +88,8 @@
       "curvature": 0.09828002995104676,
       "curvature_masked": false,
       "candidate_state": "Straight",
-      "state": null,
-      "support_status": "withheld"
+      "state": "Straight",
+      "support_status": "accepted"
     },
     {
       "t": 3.0,
@@ -210,5 +210,39 @@
       "state": "Turn",
       "support_status": "accepted"
     }
-  ]
+  ],
+  "run_summary": {
+    "candidate_state_runs": [
+      {
+        "field": "candidate_state",
+        "value": "Straight",
+        "start_index": 0,
+        "end_index": 2,
+        "length": 3
+      },
+      {
+        "field": "candidate_state",
+        "value": "Turn",
+        "start_index": 3,
+        "end_index": 9,
+        "length": 7
+      }
+    ],
+    "state_runs": [
+      {
+        "field": "state",
+        "value": "Straight",
+        "start_index": 0,
+        "end_index": 2,
+        "length": 3
+      },
+      {
+        "field": "state",
+        "value": "Turn",
+        "start_index": 3,
+        "end_index": 9,
+        "length": 7
+      }
+    ]
+  }
 }
