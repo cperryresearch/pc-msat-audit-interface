@@ -26,7 +26,7 @@
       "speed_min_for_curvature": 0.05
     },
     "persistence": {
-      "min_run": 3
+      "min_run": 4
     }
   },
   "state_model": {
@@ -53,9 +53,9 @@
       "d2y_dt2": 0.016666666666666666,
       "curvature": 0.06666666666666667,
       "curvature_masked": false,
-      "candidate_state": null,
+      "candidate_state": "Straight",
       "state": null,
-      "support_status": "unassigned"
+      "support_status": "withheld"
     },
     {
       "t": 1.0,
@@ -70,9 +70,9 @@
       "d2y_dt2": 0.041666666666666664,
       "curvature": 0.06415000647488119,
       "curvature_masked": false,
-      "candidate_state": null,
+      "candidate_state": "Straight",
       "state": null,
-      "support_status": "unassigned"
+      "support_status": "withheld"
     },
     {
       "t": 2.0,
@@ -87,9 +87,9 @@
       "d2y_dt2": 0.10833333333333334,
       "curvature": 0.09828002995104676,
       "curvature_masked": false,
-      "candidate_state": null,
+      "candidate_state": "Straight",
       "state": null,
-      "support_status": "unassigned"
+      "support_status": "withheld"
     },
     {
       "t": 3.0,
@@ -104,9 +104,9 @@
       "d2y_dt2": 0.18333333333333335,
       "curvature": 0.19999056673863433,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 4.0,
@@ -121,9 +121,9 @@
       "d2y_dt2": 0.22499999999999995,
       "curvature": 0.3222595612478772,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 5.0,
@@ -138,9 +138,9 @@
       "d2y_dt2": 0.2166666666666667,
       "curvature": 0.44122520598421977,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 6.0,
@@ -155,9 +155,9 @@
       "d2y_dt2": 0.16666666666666669,
       "curvature": 0.4126448109162227,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 7.0,
@@ -172,9 +172,9 @@
       "d2y_dt2": -0.03750000000000003,
       "curvature": 0.2146572747873013,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 8.0,
@@ -189,9 +189,9 @@
       "d2y_dt2": -0.23333333333333317,
       "curvature": 0.14361928558198273,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     },
     {
       "t": 9.0,
@@ -206,9 +206,9 @@
       "d2y_dt2": -0.2583333333333331,
       "curvature": 0.13493200297030877,
       "curvature_masked": false,
-      "candidate_state": null,
-      "state": null,
-      "support_status": "unassigned"
+      "candidate_state": "Turn",
+      "state": "Turn",
+      "support_status": "accepted"
     }
   ]
 }

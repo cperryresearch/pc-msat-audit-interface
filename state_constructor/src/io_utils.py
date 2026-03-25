@@ -54,6 +54,7 @@ def validate_required_config_fields(config: dict) -> None:
         "smoothing",
         "derivatives",
         "masking",
+        "state_logic",
         "persistence",
     ]
 
@@ -64,6 +65,7 @@ def validate_required_config_fields(config: dict) -> None:
     smoothing = config["smoothing"]
     derivatives = config["derivatives"]
     masking = config["masking"]
+    state_logic = config["state_logic"]
     persistence = config["persistence"]
 
     if "method" not in smoothing:
@@ -77,6 +79,11 @@ def validate_required_config_fields(config: dict) -> None:
     if "speed_min_for_curvature" not in masking:
         raise ValueError(
             "Missing required config field: masking.speed_min_for_curvature"
+        )
+
+    if "straight_curvature_epsilon" not in state_logic:
+        raise ValueError(
+            "Missing required config field: state_logic.straight_curvature_epsilon"
         )
 
     if "min_run" not in persistence:
@@ -97,6 +104,11 @@ def validate_required_config_fields(config: dict) -> None:
     if masking["speed_min_for_curvature"] < 0:
         raise ValueError(
             "Invalid config value: masking.speed_min_for_curvature must be >= 0"
+        )
+
+    if state_logic["straight_curvature_epsilon"] < 0:
+        raise ValueError(
+            "Invalid config value: state_logic.straight_curvature_epsilon must be >= 0"
         )
 
     if persistence["min_run"] < 1:

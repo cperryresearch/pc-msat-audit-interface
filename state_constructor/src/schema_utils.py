@@ -59,9 +59,9 @@ def build_point_record(point: dict) -> dict:
         "d2y_dt2": point["d2y_dt2"],
         "curvature": point["curvature"],
         "curvature_masked": point["curvature_masked"],
-        "candidate_state": None,
-        "state": None,
-        "support_status": "unassigned",
+        "candidate_state": point.get("candidate_state"),
+        "state": point.get("state"),
+        "support_status": point.get("support_status", "unassigned"),
     }
 
 

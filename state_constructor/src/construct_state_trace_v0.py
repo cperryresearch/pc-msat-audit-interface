@@ -30,6 +30,12 @@ from schema_utils import (
     build_point_records,
 )
 
+from state_logic import (
+    apply_persistence_acceptance,
+    assign_local_candidate_states,
+    summarize_contiguous_runs,
+)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="State-Segmented Trace Constructor v0")
@@ -96,7 +102,48 @@ def main() -> None:
         n_points=len(masked_points),
     )
 
-    point_records = build_point_records(masked_points)
+    straight_curvature_epsilon = config["state_logic"]["straight_curvature_epsilon"]
+    min_run = config["persistence"]["min_run"]
+
+    candidate_points = assign_local_candidate_states(
+        masked_points,
+        straight_curvature_epsilon,
+    )
+
+    candidate_none_count = sum(
+        1 for point in candidate_points if point.get("candidate_state") is None
+    )
+    candidate_straight_count = sum(
+        1 for point in candidate_points if point.get("candidate_state") == "Straight"
+    )
+    candidate_turn_count = sum(
+        1 for point in candidate_points if point.get("candidate_state") == "Turn"
+    )
+
+    resolved_points = apply_persistence_acceptance(candidate_points, min_run)
+
+    candidate_runs = summarize_contiguous_runs(candidate_points, "candidate_state")
+    state_runs = summarize_contiguous_runs(resolved_points, "state")
+
+    state_none_count = sum(1 for point in resolved_points if point.get("state") is None)
+    state_straight_count = sum(
+        1 for point in resolved_points if point.get("state") == "Straight"
+    )
+    state_turn_count = sum(
+        1 for point in resolved_points if point.get("state") == "Turn"
+    )
+
+    support_unassigned_count = sum(
+        1 for point in resolved_points if point.get("support_status") == "unassigned"
+    )
+    support_accepted_count = sum(
+        1 for point in resolved_points if point.get("support_status") == "accepted"
+    )
+    support_withheld_count = sum(
+        1 for point in resolved_points if point.get("support_status") == "withheld"
+    )
+
+    point_records = build_point_records(resolved_points)
 
     artifact = assemble_state_segmented_trace(
         artifact_header=artifact_header,
@@ -111,6 +158,9 @@ def main() -> None:
     first_point_record = point_records[0]
     artifact_points_count = len(artifact["points"])
     output_exists = output_path.exists()
+
+    first_candidate_run = candidate_runs[0] if candidate_runs else None
+    first_state_run = state_runs[0] if state_runs else None
 
     print("State-Segmented Trace Constructor v0")
     print(f"Input CSV     : {input_path}")
@@ -144,6 +194,41 @@ def main() -> None:
     print(f"  artifact_type = {artifact_header['artifact']['artifact_type']}")
     print(f"  ruleset       = {artifact_header['artifact']['ruleset_version']}")
     print(f"  n_points      = {artifact_header['input_spec']['n_points']}")
+
+    print("Candidate Count Preview :")
+    print(f"  epsilon  = {straight_curvature_epsilon}")
+    print(f"  None     = {candidate_none_count}")
+    print(f"  Straight = {candidate_straight_count}")
+    print(f"  Turn     = {candidate_turn_count}")
+
+    print("Persistence Preview :")
+    print(f"  min_run  = {min_run}")
+    print(f"  state None     = {state_none_count}")
+    print(f"  state Straight = {state_straight_count}")
+    print(f"  state Turn     = {state_turn_count}")
+
+    print("Support Status Preview :")
+    print(f"  unassigned = {support_unassigned_count}")
+    print(f"  accepted   = {support_accepted_count}")
+    print(f"  withheld   = {support_withheld_count}")
+
+    print("Run Summary Preview :")
+    print(f"  candidate_runs = {len(candidate_runs)}")
+    print(f"  state_runs     = {len(state_runs)}")
+
+    if first_candidate_run is not None:
+        print("  First Candidate Run :")
+        print(f"    value       = {first_candidate_run['value']}")
+        print(f"    start_index = {first_candidate_run['start_index']}")
+        print(f"    end_index   = {first_candidate_run['end_index']}")
+        print(f"    length      = {first_candidate_run['length']}")
+
+    if first_state_run is not None:
+        print("  First State Run :")
+        print(f"    value       = {first_state_run['value']}")
+        print(f"    start_index = {first_state_run['start_index']}")
+        print(f"    end_index   = {first_state_run['end_index']}")
+        print(f"    length      = {first_state_run['length']}")
 
     print("Point Record Preview :")
     print(f"  t               = {first_point_record['t']}")
