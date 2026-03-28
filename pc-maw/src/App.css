@@ -118,3 +118,59 @@
 .pcmaw-playback-slider {
   width: min(320px, 100%);
 }
+
+.pcmaw-audit-summary-block {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px dashed #bdbdbd;
+  border-radius: 12px;
+}
+
+.pcmaw-audit-summary-block h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.pcmaw-audit-run-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pcmaw-audit-run-item + .pcmaw-audit-run-item {
+  margin-top: 6px;
+}
+
+.pcmaw-supporting-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pcmaw-supporting-detail-block {
+  border: 1px dashed #bdbdbd;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.pcmaw-supporting-detail-block h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.pcmaw-detail-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pcmaw-detail-list li + li {
+  margin-top: 6px;
+}
+
+@media (max-width: 900px) {
+  .pcmaw-supporting-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
