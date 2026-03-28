@@ -67,3 +67,54 @@
     grid-template-columns: 1fr;
   }
 }
+
+.pcmaw-playback-canvas-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pcmaw-playback-canvas {
+  display: block;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.pcmaw-playback-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pcmaw-playback-controls button {
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  padding: 6px 12px;
+  background: transparent;
+  color: #e8e8e8;
+  cursor: pointer;
+}
+
+.pcmaw-playback-controls button:hover {
+  border-color: #d9d9d9;
+}
+
+.pcmaw-playback-pane p {
+  margin-bottom: 0;
+}
+
+.pcmaw-playback-status {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.pcmaw-playback-slider-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pcmaw-playback-slider {
+  width: min(320px, 100%);
+}
