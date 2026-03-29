@@ -1,6 +1,6 @@
 import type { StateSegmentedTrace } from "../types/pcmawTypes";
 
-export const sampleArtifact: StateSegmentedTrace = {
+export const sampleArtifactTestTrace001: StateSegmentedTrace = {
   artifact: {
     artifact_id: "test_trace_001_v0",
     artifact_type: "state_segmented_trace",
@@ -104,3 +104,9 @@ export const sampleArtifact: StateSegmentedTrace = {
     ],
   },
 };
+
+export const sampleArtifacts: Record<string, StateSegmentedTrace> = {
+  test_trace_001_v0: sampleArtifactTestTrace001,
+};
+
+export const defaultSampleArtifact = sampleArtifactTestTrace001;
