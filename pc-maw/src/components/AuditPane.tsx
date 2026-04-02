@@ -42,6 +42,42 @@ export default function AuditPane({ artifact }: AuditPaneProps) {
           </ul>
         )}
       </div>
+
+      <div className="pcmaw-audit-comparison-block">
+        <h3>Candidate vs state runs</h3>
+
+        <div className="pcmaw-audit-comparison-grid">
+          <div className="pcmaw-audit-comparison-column">
+            <h4>Candidate runs</h4>
+            {candidateRuns.length === 0 ? (
+              <p>No candidate runs present.</p>
+            ) : (
+              <ul className="pcmaw-audit-run-list">
+                {candidateRuns.map((run, index) => (
+                  <li key={index} className="pcmaw-audit-run-item">
+                    {formatRunLabel(run)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="pcmaw-audit-comparison-column">
+            <h4>Accepted state runs</h4>
+            {stateRuns.length === 0 ? (
+              <p>No accepted state runs present.</p>
+            ) : (
+              <ul className="pcmaw-audit-run-list">
+                {stateRuns.map((run, index) => (
+                  <li key={index} className="pcmaw-audit-run-item">
+                    {formatRunLabel(run)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

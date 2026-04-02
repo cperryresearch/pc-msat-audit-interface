@@ -119,26 +119,64 @@
   width: min(320px, 100%);
 }
 
+.pcmaw-audit-pane p {
+  margin: 6px 0;
+}
+
 .pcmaw-audit-summary-block {
-  margin-top: 16px;
-  padding: 12px;
+  margin-top: 18px;
+  padding: 14px;
   border: 1px dashed #bdbdbd;
   border-radius: 12px;
 }
 
 .pcmaw-audit-summary-block h3 {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 1rem;
 }
 
 .pcmaw-audit-run-list {
   margin: 0;
-  padding-left: 18px;
+  padding-left: 20px;
+}
+
+.pcmaw-audit-run-item {
+  line-height: 1.45;
 }
 
 .pcmaw-audit-run-item + .pcmaw-audit-run-item {
-  margin-top: 6px;
+  margin-top: 8px;
+}
+
+.pcmaw-audit-comparison-block {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px dashed #bdbdbd;
+  border-radius: 12px;
+}
+
+.pcmaw-audit-comparison-block h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.pcmaw-audit-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.pcmaw-audit-comparison-column {
+  padding: 4px 0;
+}
+
+.pcmaw-audit-comparison-column h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
 }
 
 .pcmaw-supporting-detail-grid {
@@ -172,5 +210,12 @@
 @media (max-width: 900px) {
   .pcmaw-supporting-detail-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .pcmaw-audit-comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
