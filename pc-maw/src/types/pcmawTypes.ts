@@ -10,6 +10,7 @@ export type PlaybackDisplayState =
 export type SupportStatus = "supported" | "unsupported" | "withheld" | null;
 
 export type StateSegmentedTracePoint = {
+  t: number;
   x: number;
   y: number;
   x_smooth: number;
