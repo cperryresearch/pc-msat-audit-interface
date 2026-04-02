@@ -3,9 +3,10 @@ import {
   DEFAULT_SAMPLE_EXTRACTED_TRAJECTORY_ID,
   sampleExtractedTrajectories,
 } from "../data/sampleExtractedTrajectories";
+import { buildConstructorInputFromExtractionResult } from "../utils/buildConstructorInputFromExtractionResult";
 import { attemptTrajectoryExtraction } from "../utils/attemptTrajectoryExtraction";
 
-export default function TrajectoryExtractionExercisePanel() {
+export default function ConstructorHandoffExercisePanel() {
   const [selectedTrajectoryId, setSelectedTrajectoryId] = useState<string>(
     DEFAULT_SAMPLE_EXTRACTED_TRAJECTORY_ID,
   );
@@ -28,16 +29,24 @@ export default function TrajectoryExtractionExercisePanel() {
     );
   }, [selectedTrajectoryEntry]);
 
+  const handoffResult = useMemo(() => {
+    if (!extractionResult) {
+      return null;
+    }
+
+    return buildConstructorInputFromExtractionResult(extractionResult);
+  }, [extractionResult]);
+
   return (
     <section className="extractor-exercise-panel">
-      <h2>Trajectory Extraction Exercise</h2>
+      <h2>Constructor Handoff Exercise</h2>
 
       <div className="candidate-selector-row">
-        <label htmlFor="extracted-trajectory-selector">
+        <label htmlFor="constructor-handoff-selector">
           Sample extracted trajectory
         </label>
         <select
-          id="extracted-trajectory-selector"
+          id="constructor-handoff-selector"
           value={selectedTrajectoryId}
           onChange={(event) => setSelectedTrajectoryId(event.target.value)}
         >
@@ -53,28 +62,21 @@ export default function TrajectoryExtractionExercisePanel() {
         {selectedTrajectoryEntry?.description ?? "No extracted trajectory selected."}
       </p>
 
-      {extractionResult && (
+      {handoffResult && (
         <div className="parent-status-block">
+          <p>handoffStatus: {handoffResult.can_handoff ? "ready" : "blocked"}</p>
           <p>
-            extractionStatus:{" "}
-            {extractionResult.is_extracted ? "extracted" : "extraction_failed"}
+            Constructor input present:{" "}
+            {handoffResult.constructorInput ? "Yes" : "No"}
           </p>
           <p>
-            Extracted trajectory present:{" "}
-            {extractionResult.extractedTrajectory ? "Yes" : "No"}
-          </p>
-          <p>
-            Last extraction decision:{" "}
-            {extractionResult.is_extracted ? "Accepted" : "Refused"}
+            Last handoff decision:{" "}
+            {handoffResult.can_handoff ? "Allowed" : "Refused"}
           </p>
 
-          {extractionResult.failure_stage && (
-            <p>failure_stage: {extractionResult.failure_stage}</p>
-          )}
-
-          {extractionResult.errors.length > 0 && (
+          {handoffResult.errors.length > 0 && (
             <div className="parent-error-block">
-              {extractionResult.errors.map((error, index) => (
+              {handoffResult.errors.map((error, index) => (
                 <p key={`${error.category}-${index}`}>
                   {error.category}: {error.message}
                 </p>
