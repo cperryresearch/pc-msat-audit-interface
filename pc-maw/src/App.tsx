@@ -1,93 +1,103 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import PCMAWShell from "./components/PCMAWShell";
-import { sampleArtifacts } from "./data/sampleArtifacts";
+import {
+  DEFAULT_SAMPLE_CANDIDATE_ID,
+  sampleCandidateArtifacts,
+} from "./data/sampleArtifacts";
 import type { ParentIntakeState } from "./types/pcmawIntakeTypes";
 import { createInitialParentIntakeState } from "./utils/createInitialParentIntakeState";
 import { attemptArtifactAdmission } from "./utils/attemptArtifactAdmission";
 
 export default function App() {
-  const candidateArtifact = sampleArtifacts.test_trace_001_v0;
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string>(
+    DEFAULT_SAMPLE_CANDIDATE_ID,
+  );
+
+  const selectedCandidateEntry = useMemo(() => {
+    return (
+      sampleCandidateArtifacts.find(
+        (entry) => entry.id === selectedCandidateId,
+      ) ?? sampleCandidateArtifacts[0]
+    );
+  }, [selectedCandidateId]);
 
   const [parentIntakeState, setParentIntakeState] =
     useState<ParentIntakeState>(createInitialParentIntakeState);
 
   useEffect(() => {
+    if (!selectedCandidateEntry) {
+      return;
+    }
+
     setParentIntakeState((currentState) => {
       const { nextState } = attemptArtifactAdmission(
         currentState,
-        candidateArtifact,
+        selectedCandidateEntry.candidateArtifact,
       );
 
       return nextState;
     });
-  }, [candidateArtifact]);
+  }, [selectedCandidateEntry]);
 
   const lastIntakeResult = parentIntakeState.lastIntakeResult;
   const hasActiveArtifact = parentIntakeState.activeArtifact !== null;
 
-  if (!parentIntakeState.activeArtifact) {
-    return (
-      <div className="pcmaw-shell">
-        <div className="panel">
-          <h2>Artifact Intake Failed</h2>
+  return (
+    <div className="app-shell">
+      <section className="parent-intake-panel">
+        <h1>PC-MAW</h1>
+
+        <div className="candidate-selector-row">
+          <label htmlFor="candidate-selector">Development candidate</label>
+          <select
+            id="candidate-selector"
+            value={selectedCandidateId}
+            onChange={(event) => setSelectedCandidateId(event.target.value)}
+          >
+            {sampleCandidateArtifacts.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <p className="candidate-description">
+          {selectedCandidateEntry?.description ?? "No candidate selected."}
+        </p>
+
+        <div className="parent-status-block">
+          <p>intakeStatus: {parentIntakeState.intakeStatus}</p>
+          <p>Active artifact present: {hasActiveArtifact ? "Yes" : "No"}</p>
           <p>
-            No active artifact is available because the candidate artifact was
-            not admitted by the bounded parent intake check.
+            Last intake decision:{" "}
+            {lastIntakeResult === null
+              ? "None"
+              : lastIntakeResult.is_admissible
+                ? "Admitted"
+                : "Refused"}
           </p>
 
-          <div className="panel-section">
-            <p>
-              <strong>Intake status:</strong> {parentIntakeState.intakeStatus}
-            </p>
-            <p>
-              <strong>Active artifact present:</strong>{" "}
-              {hasActiveArtifact ? "Yes" : "No"}
-            </p>
-            <p>
-              <strong>Last intake decision:</strong>{" "}
-              {lastIntakeResult?.is_admissible ? "Admitted" : "Refused"}
-            </p>
+          {lastIntakeResult?.failure_stage && (
+            <p>failure_stage: {lastIntakeResult.failure_stage}</p>
+          )}
 
-            {lastIntakeResult?.failure_stage && (
-              <p>
-                <strong>Failure stage:</strong> {lastIntakeResult.failure_stage}
-              </p>
-            )}
-          </div>
-
-          {lastIntakeResult?.errors?.length ? (
-            <ul>
+          {lastIntakeResult && lastIntakeResult.errors.length > 0 && (
+            <div className="parent-error-block">
               {lastIntakeResult.errors.map((error, index) => (
-                <li key={`${error.category}-${index}`}>
-                  <strong>{error.category}:</strong> {error.message}
-                </li>
+                <p key={`${error.category}-${index}`}>
+                  {error.category}: {error.message}
+                </p>
               ))}
-            </ul>
-          ) : null}
+            </div>
+          )}
         </div>
-      </div>
-    );
-  }
+      </section>
 
-  return (
-    <div className="pcmaw-shell">
-      <div className="panel">
-        <h2>Parent Intake Status</h2>
-        <p>
-          <strong>Intake status:</strong> {parentIntakeState.intakeStatus}
-        </p>
-        <p>
-          <strong>Active artifact present:</strong>{" "}
-          {hasActiveArtifact ? "Yes" : "No"}
-        </p>
-        <p>
-          <strong>Last intake decision:</strong>{" "}
-          {lastIntakeResult?.is_admissible ? "Admitted" : "Refused"}
-        </p>
-      </div>
-
-      <PCMAWShell activeArtifact={parentIntakeState.activeArtifact} />
+      {parentIntakeState.activeArtifact ? (
+        <PCMAWShell activeArtifact={parentIntakeState.activeArtifact} />
+      ) : null}
     </div>
   );
 }
