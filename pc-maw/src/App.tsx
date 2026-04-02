@@ -8,6 +8,7 @@ import {
 import type { ParentIntakeState } from "./types/pcmawIntakeTypes";
 import { createInitialParentIntakeState } from "./utils/createInitialParentIntakeState";
 import { attemptArtifactAdmission } from "./utils/attemptArtifactAdmission";
+import TrajectoryExtractionExercisePanel from "./components/TrajectoryExtractionExercisePanel";
 
 export default function App() {
   const [selectedCandidateId, setSelectedCandidateId] = useState<string>(
@@ -49,6 +50,7 @@ export default function App() {
         <h1>PC-MAW</h1>
 
         <div className="candidate-selector-row">
+                <TrajectoryExtractionExercisePanel />
           <label htmlFor="candidate-selector">Development candidate</label>
           <select
             id="candidate-selector"
