@@ -8,6 +8,8 @@ import {
 import type { ParentIntakeState } from "./types/pcmawIntakeTypes";
 import { createInitialParentIntakeState } from "./utils/createInitialParentIntakeState";
 import { attemptArtifactAdmission } from "./utils/attemptArtifactAdmission";
+import { evaluatePlaybackReadiness } from "./utils/evaluatePlaybackReadiness";
+import { buildPlaybackReadyTrace } from "./utils/pcmawDerivations";
 import TrajectoryExtractionExercisePanel from "./components/TrajectoryExtractionExercisePanel";
 import ConstructorHandoffExercisePanel from "./components/ConstructorHandoffExercisePanel";
 import ConstructorConstructionExercisePanel from "./components/ConstructorConstructionExercisePanel";
@@ -43,14 +45,23 @@ export default function App() {
     });
   }, [selectedCandidateEntry]);
 
-  const lastIntakeResult = parentIntakeState.lastIntakeResult;
-  const hasActiveArtifact = parentIntakeState.activeArtifact !== null;
+    const lastIntakeResult = parentIntakeState.lastIntakeResult;
+    const hasActiveArtifact = parentIntakeState.activeArtifact !== null;
+    const playbackReadiness = evaluatePlaybackReadiness(
+      parentIntakeState.activeArtifact,
+    );
+
+    const playbackReadyTrace =
+      parentIntakeState.activeArtifact !== null &&
+      playbackReadiness.isPlaybackReady
+        ? buildPlaybackReadyTrace(parentIntakeState.activeArtifact)
+        : null;
 
   return (
     <div className="app-shell">
-            <TrajectoryExtractionExercisePanel />
-            <ConstructorHandoffExercisePanel />
-            <ConstructorConstructionExercisePanel />
+      <TrajectoryExtractionExercisePanel />
+      <ConstructorHandoffExercisePanel />
+      <ConstructorConstructionExercisePanel />
 
       <section className="parent-intake-panel">
         <h1>PC-MAW</h1>
@@ -85,9 +96,17 @@ export default function App() {
                 ? "Admitted"
                 : "Refused"}
           </p>
+          <p>
+            Playback readiness:{" "}
+            {playbackReadiness.isPlaybackReady ? "Ready" : "Unavailable"}
+          </p>
 
           {lastIntakeResult?.failure_stage && (
             <p>failure_stage: {lastIntakeResult.failure_stage}</p>
+          )}
+
+          {playbackReadiness.failureStage && (
+            <p>playback_failure_stage: {playbackReadiness.failureStage}</p>
           )}
 
           {lastIntakeResult && lastIntakeResult.errors.length > 0 && (
@@ -99,11 +118,25 @@ export default function App() {
               ))}
             </div>
           )}
+
+          {playbackReadiness.errors.length > 0 && (
+            <div className="parent-error-block">
+              {playbackReadiness.errors.map((error, index) => (
+                <p key={`playback-${error.category}-${index}`}>
+                  {error.category}: {error.message}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {parentIntakeState.activeArtifact ? (
-        <PCMAWShell activeArtifact={parentIntakeState.activeArtifact} />
+            {parentIntakeState.activeArtifact ? (
+        <PCMAWShell
+          activeArtifact={parentIntakeState.activeArtifact}
+          playbackReadiness={playbackReadiness}
+          playbackReadyTrace={playbackReadyTrace}
+        />
       ) : null}
     </div>
   );

@@ -1,3 +1,4 @@
+import type { PlaybackReadinessResult } from "./pcmawPlaybackReadinessTypes";
 export type MotionState = "Straight" | "Turn" | "Hover" | "Orb";
 
 export type PlaybackDisplayState =
@@ -7,7 +8,7 @@ export type PlaybackDisplayState =
   | "Orb"
   | "Unassigned";
 
-export type SupportStatus = "accepted" | "withheld" | null;
+export type SupportStatus = "accepted" | "withheld" | "unassigned";
 
 export type StateSegmentedTracePoint = {
   t: number;
@@ -64,6 +65,8 @@ export type OrientationSummary = {
 
 export type PCMAWShellProps = {
   activeArtifact: StateSegmentedTrace;
+  playbackReadiness: PlaybackReadinessResult;
+  playbackReadyTrace: PlaybackReadyTracePoint[] | null;
 };
 
 export type OrientationRegionProps = OrientationSummary;
@@ -77,7 +80,8 @@ export type AuditPaneProps = {
 };
 
 export type MainEngagementRegionProps = {
-  playbackReadyTrace: PlaybackReadyTracePoint[];
+  playbackReadiness: PlaybackReadinessResult;
+  playbackReadyTrace: PlaybackReadyTracePoint[] | null;
   activeArtifact: StateSegmentedTrace;
 };
 

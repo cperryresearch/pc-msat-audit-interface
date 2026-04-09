@@ -1,8 +1,5 @@
 import type { PCMAWShellProps } from "../types/pcmawTypes";
-import {
-  buildOrientationSummary,
-  buildPlaybackReadyTrace,
-} from "../utils/pcmawDerivations";
+import { buildOrientationSummary } from "../utils/pcmawDerivations";
 
 import OrientationRegion from "./OrientationRegion";
 import MainEngagementRegion from "./MainEngagementRegion";
@@ -16,21 +13,23 @@ import SupportingDetailRegion from "./SupportingDetailRegion";
  * Locked responsibilities:
  * - retain parent-level ownership of the active artifact
  * - derive orientation summary
- * - derive playback_ready_trace
+ * - receive parent-approved playback readiness + playback-ready trace
  * - pass full artifact to audit-facing/supporting regions
  * - preserve parent/child boundaries
  */
 export default function PCMAWShell({
   activeArtifact,
+  playbackReadiness,
+  playbackReadyTrace,
 }: PCMAWShellProps) {
   const orientationSummary = buildOrientationSummary(activeArtifact);
-  const playbackReadyTrace = buildPlaybackReadyTrace(activeArtifact);
 
   return (
     <div className="pcmaw-shell">
       <OrientationRegion {...orientationSummary} />
 
       <MainEngagementRegion
+        playbackReadiness={playbackReadiness}
         playbackReadyTrace={playbackReadyTrace}
         activeArtifact={activeArtifact}
       />
