@@ -7,7 +7,7 @@ export type PlaybackDisplayState =
   | "Orb"
   | "Unassigned";
 
-export type SupportStatus = "supported" | "unsupported" | "withheld" | null;
+export type SupportStatus = "accepted" | "withheld" | null;
 
 export type StateSegmentedTracePoint = {
   t: number;
@@ -15,9 +15,11 @@ export type StateSegmentedTracePoint = {
   y: number;
   x_smooth: number;
   y_smooth: number;
-  dx: number | null;
-  dy: number | null;
+  dx_dt: number | null;
+  dy_dt: number | null;
   speed: number | null;
+  d2x_dt2: number | null;
+  d2y_dt2: number | null;
   curvature: number | null;
   curvature_masked: boolean;
   candidate_state: MotionState | null;

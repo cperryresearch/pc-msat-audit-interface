@@ -5,9 +5,10 @@
     "ruleset_version": "v0"
   },
   "provenance": {
-    "source_id": "test_trace_001",
-    "input_path": "state_constructor\\input\\test_trace_001.csv",
-    "output_path": "C:\\Users\\cperr\\OneDrive\\Desktop\\PC-MSAT\\pc-msat-audit-interface\\state_constructor\\output\\test_trace_001_state_segmented_trace.json"
+    "trajectory_id": "test_trace_001",
+    "source_type": "trajectory_csv",
+    "source_id": "state_constructor\\input\\test_trace_001.csv",
+    "source_label": "test_trace_001.csv"
   },
   "input_spec": {
     "projection": "planar",

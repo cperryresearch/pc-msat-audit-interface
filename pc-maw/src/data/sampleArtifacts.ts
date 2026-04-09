@@ -87,7 +87,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 1,
@@ -104,7 +104,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 2,
@@ -121,7 +121,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 3,
@@ -138,7 +138,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Turn",
       state: "Turn",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 4,
@@ -155,7 +155,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Turn",
       state: "Turn",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 5,
@@ -172,7 +172,7 @@ const validMinimalTraceArtifact = {
       curvature_masked: false,
       candidate_state: "Turn",
       state: "Turn",
-      support_status: "supported",
+      support_status: "accepted",
     },
   ],
 };
@@ -225,7 +225,7 @@ const missingRunSummaryCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 1,
@@ -242,7 +242,7 @@ const missingRunSummaryCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 2,
@@ -259,7 +259,7 @@ const missingRunSummaryCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
   ],
 };
@@ -363,7 +363,7 @@ const artifactLevelUnassignedCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 1,
@@ -380,7 +380,7 @@ const artifactLevelUnassignedCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Unassigned",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 2,
@@ -397,7 +397,7 @@ const artifactLevelUnassignedCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
   ],
 };
@@ -470,7 +470,7 @@ const invalidRunCoherenceCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 1,
@@ -487,7 +487,7 @@ const invalidRunCoherenceCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
     {
       t: 2,
@@ -504,7 +504,7 @@ const invalidRunCoherenceCandidateArtifact = {
       curvature_masked: false,
       candidate_state: "Straight",
       state: "Straight",
-      support_status: "supported",
+      support_status: "accepted",
     },
   ],
 };

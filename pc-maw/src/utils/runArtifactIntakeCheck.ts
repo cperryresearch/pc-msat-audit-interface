@@ -12,6 +12,14 @@ const ALLOWED_CANONICAL_STATES: CanonicalMotionState[] = [
   "Orb",
 ];
 
+const ALLOWED_SUPPORT_STATUSES = [
+  "accepted",
+  "withheld",
+  "unassigned",
+] as const;
+
+type AllowedSupportStatus = (typeof ALLOWED_SUPPORT_STATUSES)[number];
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -26,6 +34,10 @@ function isAllowedPointState(value: unknown): value is CanonicalMotionState | nu
 
 function isAllowedRunValue(value: unknown): value is CanonicalMotionState {
   return ALLOWED_CANONICAL_STATES.includes(value as CanonicalMotionState);
+}
+
+function isAllowedSupportStatus(value: unknown): value is AllowedSupportStatus {
+  return ALLOWED_SUPPORT_STATUSES.includes(value as AllowedSupportStatus);
 }
 
 function buildFailureResult(
@@ -205,6 +217,18 @@ export function runArtifactIntakeCheck(candidateArtifact: unknown): IntakeResult
       });
     }
 
+    if (!("candidate_state" in point)) {
+      pointEntryErrors.push({
+        category: "missing_point_field",
+        message: `points[${index}].candidate_state is required.`,
+      });
+    } else if (!isAllowedPointState(point.candidate_state)) {
+      pointEntryErrors.push({
+        category: "invalid_candidate_state",
+        message: `points[${index}].candidate_state must be Straight, Turn, Hover, Orb, or null.`,
+      });
+    }
+
     if (!("state" in point)) {
       pointEntryErrors.push({
         category: "missing_point_field",
@@ -219,6 +243,18 @@ export function runArtifactIntakeCheck(candidateArtifact: unknown): IntakeResult
       pointEntryErrors.push({
         category: "invalid_point_state",
         message: `points[${index}].state must be Straight, Turn, Hover, Orb, or null.`,
+      });
+    }
+
+    if (!("support_status" in point)) {
+      pointEntryErrors.push({
+        category: "missing_point_field",
+        message: `points[${index}].support_status is required.`,
+      });
+    } else if (!isAllowedSupportStatus(point.support_status)) {
+      pointEntryErrors.push({
+        category: "invalid_support_status",
+        message: `points[${index}].support_status must be accepted, withheld, or unassigned.`,
       });
     }
   });

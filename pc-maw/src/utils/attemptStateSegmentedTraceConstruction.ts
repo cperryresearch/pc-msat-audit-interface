@@ -150,15 +150,17 @@ export function attemptStateSegmentedTraceConstruction(
         y: point.y,
         x_smooth: point.x,
         y_smooth: point.y,
-        dx: null,
-        dy: null,
+        dx_dt: null,
+        dy_dt: null,
         speed: null,
+        d2x_dt2: null,
+        d2y_dt2: null,
         curvature: null,
         curvature_masked: false,
         candidate_state: null,
         state: null,
-        support_status: null,
-      })),
+        support_status: "unassigned",
+    })),
     };
 
     if (

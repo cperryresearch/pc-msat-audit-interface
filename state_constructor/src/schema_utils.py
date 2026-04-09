@@ -14,21 +14,28 @@ class ArtifactValidationError(Exception):
 
 def build_artifact_header(
     config: dict,
-    input_path: str,
-    output_path: str,
+    trajectory_id: str,
+    source_type: str,
+    source_id: str,
+    source_label: str | None,
     n_points: int,
 ) -> dict:
+    provenance = {
+        "trajectory_id": trajectory_id,
+        "source_type": source_type,
+        "source_id": source_id,
+    }
+
+    if source_label is not None:
+        provenance["source_label"] = source_label
+
     return {
         "artifact": {
             "artifact_id": config["artifact_id"],
             "artifact_type": "state_segmented_trace",
             "ruleset_version": config["ruleset_version"],
         },
-        "provenance": {
-            "source_id": config["source_id"],
-            "input_path": input_path,
-            "output_path": output_path,
-        },
+        "provenance": provenance,
         "input_spec": {
             "projection": config["projection"],
             "cadence_seconds": config["cadence_seconds"],
