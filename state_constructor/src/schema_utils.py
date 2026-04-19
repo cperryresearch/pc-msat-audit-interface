@@ -31,7 +31,7 @@ def build_artifact_header(
 
     return {
         "artifact": {
-            "artifact_id": config["artifact_id"],
+            "artifact_id": f"{trajectory_id}_v0",
             "artifact_type": "state_segmented_trace",
             "ruleset_version": config["ruleset_version"],
         },
