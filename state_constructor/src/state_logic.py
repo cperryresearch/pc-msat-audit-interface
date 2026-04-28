@@ -75,28 +75,54 @@ def summarize_contiguous_runs(
         return []
 
     runs: list[dict] = []
-    run_start = 0
+    run_start = None
+    run_value = None
 
-    while run_start < len(points):
-        run_value = points[run_start].get(field_name)
-        run_end = run_start + 1
+    for point_index, point in enumerate(points):
+        value = point.get(field_name)
 
-        while run_end < len(points):
-            next_value = points[run_end].get(field_name)
-            if next_value != run_value:
-                break
-            run_end += 1
+        if value is None:
+            if run_start is not None:
+                runs.append(
+                    {
+                        "field": field_name,
+                        "value": run_value,
+                        "start_index": run_start,
+                        "end_index": point_index - 1,
+                        "length": point_index - run_start,
+                    }
+                )
+                run_start = None
+                run_value = None
+            continue
 
+        if run_start is None:
+            run_start = point_index
+            run_value = value
+            continue
+
+        if value != run_value:
+            runs.append(
+                {
+                    "field": field_name,
+                    "value": run_value,
+                    "start_index": run_start,
+                    "end_index": point_index - 1,
+                    "length": point_index - run_start,
+                }
+            )
+            run_start = point_index
+            run_value = value
+
+    if run_start is not None:
         runs.append(
             {
                 "field": field_name,
                 "value": run_value,
                 "start_index": run_start,
-                "end_index": run_end - 1,
-                "length": run_end - run_start,
+                "end_index": len(points) - 1,
+                "length": len(points) - run_start,
             }
         )
-
-        run_start = run_end
 
     return runs

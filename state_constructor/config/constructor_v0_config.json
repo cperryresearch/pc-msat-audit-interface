@@ -1,7 +1,7 @@
 {
   "artifact_id": "test_trace_001_v0",
   "source_id": "test_trace_001",
-  "cadence_seconds": 1.0,
+  "cadence_seconds": 0.1,
   "projection": "planar",
   "ruleset_version": "v0",
   "smoothing": {
@@ -14,7 +14,7 @@
   "masking": {
     "speed_min_for_curvature": 0.05
   },
-    "state_logic": {
+  "state_logic": {
     "straight_curvature_epsilon": 0.1
   },
   "persistence": {

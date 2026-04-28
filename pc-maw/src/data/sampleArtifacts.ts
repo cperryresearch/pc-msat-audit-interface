@@ -1,3 +1,5 @@
+import { realUciPedestriansInTrafficOid39406Artifact } from "./realUciPedestriansInTrafficOid39406Artifact";
+
 export type SampleCandidateEntry = {
   id: string;
   label: string;
@@ -420,6 +422,7 @@ const realConstructorTraceArtifact = {
     ],
   },
 };
+
 
 const realBarnSwallowTraceArtifact = {
   artifact: {
@@ -1010,6 +1013,13 @@ export const sampleCandidateArtifacts: SampleCandidateEntry[] = [
       "Real upstream-produced constructor artifact admitted through the current parent intake exercise flow.",
     candidateArtifact: realConstructorTraceArtifact,
   },
+  {
+  id: "real-constructor-uci-pedestrians-oid-39406",
+  label: "Real constructor trace: UCI Pedestrians in Traffic oid 39406",
+  description:
+    "Real upstream-produced constructor artifact from tracks.csv oid 39406 admitted through the current parent intake exercise flow.",
+  candidateArtifact: realUciPedestriansInTrafficOid39406Artifact,
+},
   {
   id: "real-constructor-barn-swallow-2019-06-18",
   label: "Real constructor trace: barn swallow 2019-06-18",
