@@ -119,77 +119,165 @@
   width: min(320px, 100%);
 }
 
+/* PC-MSAT / Audit pane */
+
+.pcmaw-audit-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .pcmaw-audit-pane p {
   margin: 6px 0;
 }
 
-.pcmaw-audit-summary-block {
-  margin-top: 18px;
-  padding: 14px;
-  border: 1px dashed #bdbdbd;
-  border-radius: 12px;
+.pcmaw-audit-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.pcmaw-audit-summary-block h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 1rem;
-}
-
-.pcmaw-audit-run-list {
+.pcmaw-audit-header h2 {
   margin: 0;
-  padding-left: 20px;
 }
 
-.pcmaw-audit-run-item {
-  line-height: 1.45;
+.pcmaw-audit-subtitle {
+  margin: 4px 0 0;
+  color: #bfc7d5;
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
-.pcmaw-audit-run-item + .pcmaw-audit-run-item {
-  margin-top: 8px;
+.pcmaw-audit-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
+.pcmaw-audit-metric-card {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(217, 217, 217, 0.55);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.pcmaw-audit-metric-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #bfc7d5;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+.pcmaw-audit-metric-value {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.pcmaw-audit-summary-block,
 .pcmaw-audit-comparison-block {
-  margin-top: 18px;
-  padding: 14px;
+  padding: 12px;
   border: 1px dashed #bdbdbd;
   border-radius: 12px;
 }
 
-.pcmaw-audit-comparison-block h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
+.pcmaw-audit-section-heading,
+.pcmaw-audit-column-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pcmaw-audit-section-heading h3,
+.pcmaw-audit-column-heading h4 {
+  margin: 0;
+}
+
+.pcmaw-audit-section-heading h3 {
   font-size: 1rem;
+}
+
+.pcmaw-audit-column-heading h4 {
+  font-size: 0.9rem;
+}
+
+.pcmaw-audit-section-heading span,
+.pcmaw-audit-column-heading span {
+  color: #bfc7d5;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.pcmaw-audit-detail-box {
+  max-height: 132px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px dashed rgba(189, 189, 189, 0.7);
+  border-radius: 10px;
+}
+
+.pcmaw-audit-detail-box-tall {
+  max-height: 220px;
 }
 
 .pcmaw-audit-comparison-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   align-items: start;
 }
 
 .pcmaw-audit-comparison-column {
-  padding: 4px 0;
+  min-width: 0;
 }
 
-.pcmaw-audit-comparison-column h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
+.pcmaw-audit-run-list {
+  margin: 0;
+  padding-left: 18px;
 }
+
+.pcmaw-audit-run-item {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.pcmaw-audit-run-item + .pcmaw-audit-run-item {
+  margin-top: 6px;
+}
+
+.pcmaw-audit-empty-state {
+  margin: 0;
+  color: #bfc7d5;
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .pcmaw-audit-comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+/* Supporting detail region */
 
 .pcmaw-supporting-detail-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-top: 16px;
 }
 
 .pcmaw-supporting-detail-block {
+  min-width: 0;
   border: 1px dashed #bdbdbd;
   border-radius: 12px;
   padding: 12px;
+  box-sizing: border-box;
 }
 
 .pcmaw-supporting-detail-block h3 {
@@ -199,8 +287,16 @@
 }
 
 .pcmaw-detail-list {
+  min-width: 0;
   margin: 0;
   padding-left: 18px;
+}
+
+.pcmaw-detail-list li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
 .pcmaw-detail-list li + li {
@@ -213,12 +309,7 @@
   }
 }
 
-@media (max-width: 900px) {
-  .pcmaw-audit-comparison-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-}
+/* App-level exercise panels */
 
 .app-shell {
   display: flex;
