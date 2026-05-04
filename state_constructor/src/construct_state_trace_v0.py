@@ -39,8 +39,8 @@ from state_logic import (
 
 
 def validate_v0_point_vocab(points: list[dict]) -> None:
-    allowed_candidate_states = {"Straight", "Turn", None}
-    allowed_final_states = {"Straight", "Turn", None}
+    allowed_candidate_states = {"Straight", "Turn", "Hover", None}
+    allowed_final_states = {"Straight", "Turn", "Hover", None}
     allowed_support_status = {"accepted", "withheld", "unassigned"}
 
     for idx, point in enumerate(points):
@@ -233,11 +233,13 @@ def construct_state_segmented_trace_v0(
         )
 
         straight_curvature_epsilon = config["state_logic"]["straight_curvature_epsilon"]
+        hover_speed_epsilon = config["state_logic"]["hover_speed_epsilon"]
         min_run = config["persistence"]["min_run"]
 
         candidate_points = assign_local_candidate_states(
             masked_points,
             straight_curvature_epsilon,
+            hover_speed_epsilon,
         )
 
         resolved_points = apply_persistence_acceptance(candidate_points, min_run)

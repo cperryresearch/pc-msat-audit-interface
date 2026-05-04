@@ -15,7 +15,8 @@
     "speed_min_for_curvature": 0.05
   },
   "state_logic": {
-    "straight_curvature_epsilon": 0.1
+    "straight_curvature_epsilon": 0.1,
+    "hover_speed_epsilon": 0.05
   },
   "persistence": {
     "min_run": 3

@@ -1,0 +1,235 @@
+{
+  "artifact": {
+    "artifact_id": "test_trace_hover_001_v0",
+    "artifact_type": "state_segmented_trace",
+    "ruleset_version": "v0"
+  },
+  "provenance": {
+    "trajectory_id": "test_trace_hover_001",
+    "source_type": "trajectory_csv",
+    "source_id": "state_constructor\\input\\test_trace_hover_001.csv",
+    "source_label": "test_trace_hover_001.csv"
+  },
+  "input_spec": {
+    "projection": "planar",
+    "cadence_seconds": 0.1,
+    "n_points": 10
+  },
+  "processing": {
+    "smoothing": {
+      "method": "fixed_moving_average",
+      "window": 3
+    },
+    "derivatives": {
+      "method": "finite_difference"
+    },
+    "masking": {
+      "speed_min_for_curvature": 0.05
+    },
+    "persistence": {
+      "min_run": 3
+    }
+  },
+  "state_model": {
+    "activated_states": [
+      "Straight",
+      "Turn",
+      "Hover"
+    ],
+    "deferred_states": [
+      "Orb"
+    ]
+  },
+  "points": [
+    {
+      "t": 0.0,
+      "x": 0.0,
+      "y": 0.0,
+      "x_smooth": 0.0005,
+      "y_smooth": 0.0,
+      "dx_dt": 0.005,
+      "dy_dt": 0.0,
+      "speed": 0.005,
+      "d2x_dt2": 0.024999999999999994,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.1,
+      "x": 0.001,
+      "y": 0.0,
+      "x_smooth": 0.001,
+      "y_smooth": 0.0,
+      "dx_dt": 0.0075,
+      "dy_dt": 0.0,
+      "speed": 0.0075,
+      "d2x_dt2": 0.025000000000000015,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.2,
+      "x": 0.002,
+      "y": 0.0,
+      "x_smooth": 0.002,
+      "y_smooth": 0.0,
+      "dx_dt": 0.010000000000000004,
+      "dy_dt": 0.0,
+      "speed": 0.010000000000000004,
+      "d2x_dt2": 0.012500000000000004,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.3,
+      "x": 0.003,
+      "y": 0.0,
+      "x_smooth": 0.0030000000000000005,
+      "y_smooth": 0.0,
+      "dx_dt": 0.01,
+      "dy_dt": 0.0,
+      "speed": 0.01,
+      "d2x_dt2": -3.469446951953614e-17,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.4,
+      "x": 0.004,
+      "y": 0.0,
+      "x_smooth": 0.004,
+      "y_smooth": 0.0,
+      "dx_dt": 0.009999999999999997,
+      "dy_dt": 0.0,
+      "speed": 0.009999999999999997,
+      "d2x_dt2": -8.673617379884035e-18,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.5,
+      "x": 0.005,
+      "y": 0.0,
+      "x_smooth": 0.005,
+      "y_smooth": 0.0,
+      "dx_dt": 0.009999999999999998,
+      "dy_dt": 0.0,
+      "speed": 0.009999999999999998,
+      "d2x_dt2": 2.6020852139652113e-17,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.6,
+      "x": 0.006,
+      "y": 0.0,
+      "x_smooth": 0.005999999999999999,
+      "y_smooth": 0.0,
+      "dx_dt": 0.010000000000000002,
+      "dy_dt": 0.0,
+      "speed": 0.010000000000000002,
+      "d2x_dt2": 1.7347234759768074e-17,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.7,
+      "x": 0.007,
+      "y": 0.0,
+      "x_smooth": 0.007,
+      "y_smooth": 0.0,
+      "dx_dt": 0.010000000000000002,
+      "dy_dt": 0.0,
+      "speed": 0.010000000000000002,
+      "d2x_dt2": -0.012500000000000008,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.8,
+      "x": 0.008,
+      "y": 0.0,
+      "x_smooth": 0.008,
+      "y_smooth": 0.0,
+      "dx_dt": 0.0075,
+      "dy_dt": 0.0,
+      "speed": 0.0075,
+      "d2x_dt2": -0.024999999999999974,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    },
+    {
+      "t": 0.9,
+      "x": 0.009,
+      "y": 0.0,
+      "x_smooth": 0.0085,
+      "y_smooth": 0.0,
+      "dx_dt": 0.005000000000000005,
+      "dy_dt": 0.0,
+      "speed": 0.005000000000000005,
+      "d2x_dt2": -0.02499999999999995,
+      "d2y_dt2": 0.0,
+      "curvature": null,
+      "curvature_masked": true,
+      "candidate_state": "Hover",
+      "state": "Hover",
+      "support_status": "accepted"
+    }
+  ],
+  "run_summary": {
+    "candidate_state_runs": [
+      {
+        "field": "candidate_state",
+        "value": "Hover",
+        "start_index": 0,
+        "end_index": 9,
+        "length": 10
+      }
+    ],
+    "state_runs": [
+      {
+        "field": "state",
+        "value": "Hover",
+        "start_index": 0,
+        "end_index": 9,
+        "length": 10
+      }
+    ]
+  }
+}

@@ -33,10 +33,10 @@
   "state_model": {
     "activated_states": [
       "Straight",
-      "Turn"
+      "Turn",
+      "Hover"
     ],
     "deferred_states": [
-      "Hover",
       "Orb"
     ]
   },

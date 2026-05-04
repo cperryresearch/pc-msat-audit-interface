@@ -4,14 +4,18 @@ from __future__ import annotations
 def assign_local_candidate_states(
     points: list[dict],
     straight_curvature_epsilon: float,
+    hover_speed_epsilon: float,
 ) -> list[dict]:
     candidate_points: list[dict] = []
 
     for point in points:
+        speed = point["speed"]
         curvature = point["curvature"]
         curvature_masked = point["curvature_masked"]
 
-        if curvature_masked or curvature is None:
+        if speed is not None and speed <= hover_speed_epsilon:
+            candidate_state = "Hover"
+        elif curvature_masked or curvature is None:
             candidate_state = None
         elif abs(curvature) <= straight_curvature_epsilon:
             candidate_state = "Straight"

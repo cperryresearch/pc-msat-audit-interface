@@ -57,8 +57,8 @@ def build_artifact_header(
             },
         },
         "state_model": {
-            "activated_states": ["Straight", "Turn"],
-            "deferred_states": ["Hover", "Orb"],
+            "activated_states": ["Straight", "Turn", "Hover"],
+            "deferred_states": ["Orb"],
         },
     }
 
@@ -155,8 +155,8 @@ def validate_artifact_consistency_v0(artifact_dict: dict) -> list[dict]:
                         }
                     )
 
-    allowed_candidate_states = {"Straight", "Turn", None}
-    allowed_states = {"Straight", "Turn", None}
+    allowed_candidate_states = {"Straight", "Turn", "Hover", None}
+    allowed_states = {"Straight", "Turn", "Hover", None}
     allowed_support_statuses = {"accepted", "withheld", "unassigned"}
 
     points = artifact_dict.get("points")
@@ -327,6 +327,7 @@ def validate_artifact_consistency_v0(artifact_dict: dict) -> list[dict]:
                             ),
                         }
                     )
+
     points = artifact_dict.get("points")
     run_summary = artifact_dict.get("run_summary")
 
