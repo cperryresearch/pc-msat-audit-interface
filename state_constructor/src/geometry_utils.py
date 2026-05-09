@@ -89,6 +89,24 @@ def compute_speed_from_derivatives(derived_points: list[dict]) -> list[dict]:
 
     return speed_points
 
+def compute_heading_from_derivatives(speed_points: list[dict]) -> list[dict]:
+    heading_points: list[dict] = []
+
+    for point in speed_points:
+        dx_dt = point["dx_dt"]
+        dy_dt = point["dy_dt"]
+
+        heading = math.atan2(dy_dt, dx_dt)
+
+        heading_points.append(
+            {
+                **point,
+                "heading": heading,
+            }
+        )
+
+    return heading_points
+
 
 def compute_second_derivatives_xy(speed_points: list[dict]) -> list[dict]:
     if len(speed_points) < 3:

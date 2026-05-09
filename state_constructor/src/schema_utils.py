@@ -73,6 +73,7 @@ def build_point_record(point: dict) -> dict:
         "dx_dt": point["dx_dt"],
         "dy_dt": point["dy_dt"],
         "speed": point["speed"],
+        "heading": point["heading"],
         "d2x_dt2": point["d2x_dt2"],
         "d2y_dt2": point["d2y_dt2"],
         "curvature": point["curvature"],

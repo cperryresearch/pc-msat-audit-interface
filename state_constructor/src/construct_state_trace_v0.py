@@ -10,6 +10,7 @@ from geometry_utils import (
     compute_centered_moving_average_xy,
     compute_curvature,
     compute_first_derivatives_xy,
+    compute_heading_from_derivatives,
     compute_second_derivatives_xy,
     compute_speed_from_derivatives,
 )
@@ -214,7 +215,8 @@ def construct_state_segmented_trace_v0(
         smoothed_points = compute_centered_moving_average_xy(trace_points, window)
         derived_points = compute_first_derivatives_xy(smoothed_points)
         speed_points = compute_speed_from_derivatives(derived_points)
-        accel_points = compute_second_derivatives_xy(speed_points)
+        heading_points = compute_heading_from_derivatives(speed_points)
+        accel_points = compute_second_derivatives_xy(heading_points)
         curvature_points = compute_curvature(accel_points)
 
         speed_min_for_curvature = config["masking"]["speed_min_for_curvature"]
@@ -371,6 +373,7 @@ def main() -> None:
     print(f"  dx_dt           = {first_point_record['dx_dt']}")
     print(f"  dy_dt           = {first_point_record['dy_dt']}")
     print(f"  speed           = {first_point_record['speed']}")
+    print(f"  heading         = {first_point_record['heading']}")
     print(f"  d2x_dt2         = {first_point_record['d2x_dt2']}")
     print(f"  d2y_dt2         = {first_point_record['d2y_dt2']}")
     print(f"  curvature       = {first_point_record['curvature']}")
