@@ -8,6 +8,7 @@ from pathlib import Path
 from geometry_utils import (
     apply_low_speed_curvature_mask,
     compute_centered_moving_average_xy,
+    compute_cumulative_heading_sweep,
     compute_curvature,
     compute_first_derivatives_xy,
     compute_heading_delta,
@@ -218,7 +219,8 @@ def construct_state_segmented_trace_v0(
         speed_points = compute_speed_from_derivatives(derived_points)
         heading_points = compute_heading_from_derivatives(speed_points)
         heading_delta_points = compute_heading_delta(heading_points)
-        accel_points = compute_second_derivatives_xy(heading_delta_points)
+        heading_sweep_points = compute_cumulative_heading_sweep(heading_delta_points)
+        accel_points = compute_second_derivatives_xy(heading_sweep_points)
         curvature_points = compute_curvature(accel_points)
 
         speed_min_for_curvature = config["masking"]["speed_min_for_curvature"]
@@ -377,6 +379,7 @@ def main() -> None:
     print(f"  speed           = {first_point_record['speed']}")
     print(f"  heading         = {first_point_record['heading']}")
     print(f"  heading_delta   = {first_point_record['heading_delta']}")
+    print(f"  heading_sweep   = {first_point_record['cumulative_heading_sweep']}")
     print(f"  d2x_dt2         = {first_point_record['d2x_dt2']}")
     print(f"  d2y_dt2         = {first_point_record['d2y_dt2']}")
     print(f"  curvature       = {first_point_record['curvature']}")

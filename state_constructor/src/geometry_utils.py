@@ -131,6 +131,27 @@ def compute_heading_delta(heading_points: list[dict]) -> list[dict]:
 
     return heading_delta_points
 
+def compute_cumulative_heading_sweep(
+    heading_delta_points: list[dict],
+) -> list[dict]:
+    cumulative_heading_sweep_points: list[dict] = []
+    cumulative_heading_sweep = 0.0
+
+    for point in heading_delta_points:
+        heading_delta = point["heading_delta"]
+
+        if heading_delta is not None:
+            cumulative_heading_sweep += abs(heading_delta)
+
+        cumulative_heading_sweep_points.append(
+            {
+                **point,
+                "cumulative_heading_sweep": cumulative_heading_sweep,
+            }
+        )
+
+    return cumulative_heading_sweep_points
+
 
 def compute_second_derivatives_xy(speed_points: list[dict]) -> list[dict]:
     if len(speed_points) < 3:
