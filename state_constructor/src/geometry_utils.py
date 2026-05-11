@@ -107,6 +107,30 @@ def compute_heading_from_derivatives(speed_points: list[dict]) -> list[dict]:
 
     return heading_points
 
+def wrap_angle_delta(angle_delta: float) -> float:
+    return (angle_delta + math.pi) % (2 * math.pi) - math.pi
+
+
+def compute_heading_delta(heading_points: list[dict]) -> list[dict]:
+    heading_delta_points: list[dict] = []
+
+    for idx, point in enumerate(heading_points):
+        if idx == 0:
+            heading_delta = None
+        else:
+            previous_heading = heading_points[idx - 1]["heading"]
+            current_heading = point["heading"]
+            heading_delta = wrap_angle_delta(current_heading - previous_heading)
+
+        heading_delta_points.append(
+            {
+                **point,
+                "heading_delta": heading_delta,
+            }
+        )
+
+    return heading_delta_points
+
 
 def compute_second_derivatives_xy(speed_points: list[dict]) -> list[dict]:
     if len(speed_points) < 3:
