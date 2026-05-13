@@ -16,7 +16,8 @@
   },
   "state_logic": {
     "straight_curvature_epsilon": 0.1,
-    "hover_speed_epsilon": 0.05
+    "hover_speed_epsilon": 0.05,
+    "heading_delta_sign_epsilon": 0.001
   },
   "persistence": {
     "min_run": 3

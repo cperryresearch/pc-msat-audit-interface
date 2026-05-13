@@ -28,6 +28,15 @@
     },
     "persistence": {
       "min_run": 3
+    },
+    "diagnostics": {
+      "rotational_persistence": {
+        "heading_delta_sign_epsilon": 0.001,
+        "same_sign_heading_delta_runs": [],
+        "max_same_sign_run_length": 0,
+        "max_same_sign_run_cumulative_abs_heading_delta": 0.0,
+        "dominant_rotational_sign": null
+      }
     }
   },
   "state_model": {
@@ -52,6 +61,7 @@
       "speed": 0.005,
       "heading": 0.0,
       "heading_delta": null,
+      "heading_delta_sign": null,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": 0.024999999999999994,
       "d2y_dt2": 0.0,
@@ -72,6 +82,7 @@
       "speed": 0.0075,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": 0.025000000000000015,
       "d2y_dt2": 0.0,
@@ -92,6 +103,7 @@
       "speed": 0.010000000000000004,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": 0.012500000000000004,
       "d2y_dt2": 0.0,
@@ -112,6 +124,7 @@
       "speed": 0.01,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": -3.469446951953614e-17,
       "d2y_dt2": 0.0,
@@ -132,6 +145,7 @@
       "speed": 0.009999999999999997,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": -8.673617379884035e-18,
       "d2y_dt2": 0.0,
@@ -152,6 +166,7 @@
       "speed": 0.009999999999999998,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": 2.6020852139652113e-17,
       "d2y_dt2": 0.0,
@@ -172,6 +187,7 @@
       "speed": 0.010000000000000002,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": 1.7347234759768074e-17,
       "d2y_dt2": 0.0,
@@ -192,6 +208,7 @@
       "speed": 0.010000000000000002,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": -0.012500000000000008,
       "d2y_dt2": 0.0,
@@ -212,6 +229,7 @@
       "speed": 0.0075,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": -0.024999999999999974,
       "d2y_dt2": 0.0,
@@ -232,6 +250,7 @@
       "speed": 0.005000000000000005,
       "heading": 0.0,
       "heading_delta": 0.0,
+      "heading_delta_sign": 0,
       "cumulative_heading_sweep": 0.0,
       "d2x_dt2": -0.02499999999999995,
       "d2y_dt2": 0.0,

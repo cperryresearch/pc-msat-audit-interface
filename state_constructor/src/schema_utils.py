@@ -19,6 +19,7 @@ def build_artifact_header(
     source_id: str,
     source_label: str | None,
     n_points: int,
+    diagnostics: dict | None = None,
 ) -> dict:
     provenance = {
         "trajectory_id": trajectory_id,
@@ -28,6 +29,25 @@ def build_artifact_header(
 
     if source_label is not None:
         provenance["source_label"] = source_label
+
+    processing = {
+        "smoothing": {
+            "method": config["smoothing"]["method"],
+            "window": config["smoothing"]["window"],
+        },
+        "derivatives": {
+            "method": config["derivatives"]["method"],
+        },
+        "masking": {
+            "speed_min_for_curvature": config["masking"]["speed_min_for_curvature"],
+        },
+        "persistence": {
+            "min_run": config["persistence"]["min_run"],
+        },
+    }
+
+    if diagnostics is not None:
+        processing["diagnostics"] = diagnostics
 
     return {
         "artifact": {
@@ -41,27 +61,12 @@ def build_artifact_header(
             "cadence_seconds": config["cadence_seconds"],
             "n_points": n_points,
         },
-        "processing": {
-            "smoothing": {
-                "method": config["smoothing"]["method"],
-                "window": config["smoothing"]["window"],
-            },
-            "derivatives": {
-                "method": config["derivatives"]["method"],
-            },
-            "masking": {
-                "speed_min_for_curvature": config["masking"]["speed_min_for_curvature"],
-            },
-            "persistence": {
-                "min_run": config["persistence"]["min_run"],
-            },
-        },
+        "processing": processing,
         "state_model": {
             "activated_states": ["Straight", "Turn", "Hover"],
             "deferred_states": ["Orb"],
         },
     }
-
 
 def build_point_record(point: dict) -> dict:
     return {
@@ -75,6 +80,7 @@ def build_point_record(point: dict) -> dict:
         "speed": point["speed"],
         "heading": point["heading"],
         "heading_delta": point["heading_delta"],
+        "heading_delta_sign": point["heading_delta_sign"],
         "cumulative_heading_sweep": point["cumulative_heading_sweep"],
         "d2x_dt2": point["d2x_dt2"],
         "d2y_dt2": point["d2y_dt2"],
@@ -133,6 +139,7 @@ def validate_artifact_consistency_v0(artifact_dict: dict) -> list[dict]:
         "speed",
         "heading",
         "heading_delta",
+        "heading_delta_sign",
         "cumulative_heading_sweep",
         "d2x_dt2",
         "d2y_dt2",

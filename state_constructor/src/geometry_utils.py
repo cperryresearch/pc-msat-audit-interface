@@ -131,6 +131,92 @@ def compute_heading_delta(heading_points: list[dict]) -> list[dict]:
 
     return heading_delta_points
 
+def compute_heading_delta_sign(
+    heading_delta_points: list[dict],
+    epsilon: float,
+) -> list[dict]:
+    heading_delta_sign_points: list[dict] = []
+
+    for point in heading_delta_points:
+        heading_delta = point["heading_delta"]
+
+        if heading_delta is None:
+            heading_delta_sign = None
+        elif abs(heading_delta) <= epsilon:
+            heading_delta_sign = 0
+        elif heading_delta > 0:
+            heading_delta_sign = 1
+        else:
+            heading_delta_sign = -1
+
+        heading_delta_sign_points.append(
+            {
+                **point,
+                "heading_delta_sign": heading_delta_sign,
+            }
+        )
+
+    return heading_delta_sign_points
+
+def summarize_same_sign_heading_delta_runs(points: list[dict]) -> list[dict]:
+    same_sign_runs: list[dict] = []
+
+    active_sign: int | None = None
+    run_start_index: int | None = None
+    cumulative_abs_heading_delta = 0.0
+
+    def close_active_run(end_index: int) -> None:
+        nonlocal active_sign
+        nonlocal run_start_index
+        nonlocal cumulative_abs_heading_delta
+
+        if active_sign is None or run_start_index is None:
+            return
+
+        length = end_index - run_start_index + 1
+
+        same_sign_runs.append(
+            {
+                "sign": active_sign,
+                "start_index": run_start_index,
+                "end_index": end_index,
+                "length": length,
+                "cumulative_abs_heading_delta": cumulative_abs_heading_delta,
+                "mean_abs_heading_delta": cumulative_abs_heading_delta / length,
+            }
+        )
+
+        active_sign = None
+        run_start_index = None
+        cumulative_abs_heading_delta = 0.0
+
+    for point_index, point in enumerate(points):
+        heading_delta_sign = point["heading_delta_sign"]
+        heading_delta = point["heading_delta"]
+
+        if heading_delta_sign not in {-1, 1}:
+            close_active_run(point_index - 1)
+            continue
+
+        if active_sign is None:
+            active_sign = heading_delta_sign
+            run_start_index = point_index
+            cumulative_abs_heading_delta = abs(heading_delta)
+            continue
+
+        if heading_delta_sign != active_sign:
+            close_active_run(point_index - 1)
+            active_sign = heading_delta_sign
+            run_start_index = point_index
+            cumulative_abs_heading_delta = abs(heading_delta)
+            continue
+
+        cumulative_abs_heading_delta += abs(heading_delta)
+
+    close_active_run(len(points) - 1)
+
+    return same_sign_runs
+
 def compute_cumulative_heading_sweep(
     heading_delta_points: list[dict],
 ) -> list[dict]:

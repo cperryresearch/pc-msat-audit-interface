@@ -13,8 +13,10 @@ from geometry_utils import (
     compute_first_derivatives_xy,
     compute_heading_delta,
     compute_heading_from_derivatives,
+    compute_heading_delta_sign,
     compute_second_derivatives_xy,
     compute_speed_from_derivatives,
+    summarize_same_sign_heading_delta_runs,
 )
 from io_utils import (
     ensure_required_paths_exist,
@@ -219,7 +221,53 @@ def construct_state_segmented_trace_v0(
         speed_points = compute_speed_from_derivatives(derived_points)
         heading_points = compute_heading_from_derivatives(speed_points)
         heading_delta_points = compute_heading_delta(heading_points)
-        heading_sweep_points = compute_cumulative_heading_sweep(heading_delta_points)
+
+        heading_delta_sign_epsilon = config["state_logic"]["heading_delta_sign_epsilon"]
+        heading_delta_sign_points = compute_heading_delta_sign(
+            heading_delta_points,
+            heading_delta_sign_epsilon,
+        )
+
+        same_sign_heading_delta_runs = summarize_same_sign_heading_delta_runs(
+            heading_delta_sign_points
+        )
+
+        max_same_sign_run_length = max(
+            (run["length"] for run in same_sign_heading_delta_runs),
+            default=0,
+        )
+
+        max_same_sign_run_cumulative_abs_heading_delta = max(
+            (
+                run["cumulative_abs_heading_delta"]
+                for run in same_sign_heading_delta_runs
+            ),
+            default=0.0,
+        )
+
+        dominant_rotational_sign = None
+        if same_sign_heading_delta_runs:
+            dominant_run = max(
+                same_sign_heading_delta_runs,
+                key=lambda run: run["cumulative_abs_heading_delta"],
+            )
+            dominant_rotational_sign = dominant_run["sign"]
+
+        rotational_persistence_diagnostics = {
+            "rotational_persistence": {
+                "heading_delta_sign_epsilon": heading_delta_sign_epsilon,
+                "same_sign_heading_delta_runs": same_sign_heading_delta_runs,
+                "max_same_sign_run_length": max_same_sign_run_length,
+                "max_same_sign_run_cumulative_abs_heading_delta": (
+                    max_same_sign_run_cumulative_abs_heading_delta
+                ),
+                "dominant_rotational_sign": dominant_rotational_sign,
+            }
+        }
+
+        heading_sweep_points = compute_cumulative_heading_sweep(
+            heading_delta_sign_points
+        )
         accel_points = compute_second_derivatives_xy(heading_sweep_points)
         curvature_points = compute_curvature(accel_points)
 
@@ -236,6 +284,7 @@ def construct_state_segmented_trace_v0(
             source_id=source_id,
             source_label=source_label,
             n_points=len(masked_points),
+            diagnostics=rotational_persistence_diagnostics,
         )
 
         straight_curvature_epsilon = config["state_logic"]["straight_curvature_epsilon"]
@@ -379,6 +428,7 @@ def main() -> None:
     print(f"  speed           = {first_point_record['speed']}")
     print(f"  heading         = {first_point_record['heading']}")
     print(f"  heading_delta   = {first_point_record['heading_delta']}")
+    print(f"  heading_delta_sign = {first_point_record['heading_delta_sign']}")
     print(f"  heading_sweep   = {first_point_record['cumulative_heading_sweep']}")
     print(f"  d2x_dt2         = {first_point_record['d2x_dt2']}")
     print(f"  d2y_dt2         = {first_point_record['d2y_dt2']}")
