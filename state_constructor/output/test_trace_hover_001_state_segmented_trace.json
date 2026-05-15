@@ -36,6 +36,95 @@
         "max_same_sign_run_length": 0,
         "max_same_sign_run_cumulative_abs_heading_delta": 0.0,
         "dominant_rotational_sign": null
+      },
+      "windowed_heading_sweep": {
+        "mode": "trailing_point_count",
+        "window_size_points": 5,
+        "windows": [
+          {
+            "start_index": 0,
+            "end_index": 0,
+            "length": 1,
+            "heading_delta_count": 0,
+            "heading_sweep": 0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 0,
+            "end_index": 1,
+            "length": 2,
+            "heading_delta_count": 1,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 0,
+            "end_index": 2,
+            "length": 3,
+            "heading_delta_count": 2,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 0,
+            "end_index": 3,
+            "length": 4,
+            "heading_delta_count": 3,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 0,
+            "end_index": 4,
+            "length": 5,
+            "heading_delta_count": 4,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 1,
+            "end_index": 5,
+            "length": 5,
+            "heading_delta_count": 5,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 2,
+            "end_index": 6,
+            "length": 5,
+            "heading_delta_count": 5,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 3,
+            "end_index": 7,
+            "length": 5,
+            "heading_delta_count": 5,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 4,
+            "end_index": 8,
+            "length": 5,
+            "heading_delta_count": 5,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          },
+          {
+            "start_index": 5,
+            "end_index": 9,
+            "length": 5,
+            "heading_delta_count": 5,
+            "heading_sweep": 0.0,
+            "mean_abs_heading_delta": 0.0
+          }
+        ],
+        "max_window_heading_sweep": 0,
+        "max_window_start_index": 0,
+        "max_window_end_index": 0
       }
     }
   },

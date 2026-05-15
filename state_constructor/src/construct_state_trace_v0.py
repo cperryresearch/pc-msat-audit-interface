@@ -17,6 +17,7 @@ from geometry_utils import (
     compute_second_derivatives_xy,
     compute_speed_from_derivatives,
     summarize_same_sign_heading_delta_runs,
+    summarize_windowed_heading_sweep,
 )
 from io_utils import (
     ensure_required_paths_exist,
@@ -232,6 +233,14 @@ def construct_state_segmented_trace_v0(
             heading_delta_sign_points
         )
 
+        windowed_heading_sweep_window_size_points = config["state_logic"][
+            "windowed_heading_sweep_window_size_points"
+        ]
+        windowed_heading_sweep_diagnostics = summarize_windowed_heading_sweep(
+            heading_delta_sign_points,
+            windowed_heading_sweep_window_size_points,
+        )
+
         max_same_sign_run_length = max(
             (run["length"] for run in same_sign_heading_delta_runs),
             default=0,
@@ -262,7 +271,8 @@ def construct_state_segmented_trace_v0(
                     max_same_sign_run_cumulative_abs_heading_delta
                 ),
                 "dominant_rotational_sign": dominant_rotational_sign,
-            }
+            },
+            "windowed_heading_sweep": windowed_heading_sweep_diagnostics,
         }
 
         heading_sweep_points = compute_cumulative_heading_sweep(

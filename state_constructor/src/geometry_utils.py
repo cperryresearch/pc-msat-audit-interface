@@ -217,6 +217,65 @@ def summarize_same_sign_heading_delta_runs(points: list[dict]) -> list[dict]:
 
     return same_sign_runs
 
+def summarize_windowed_heading_sweep(
+    points: list[dict],
+    window_size_points: int,
+) -> dict:
+    if window_size_points < 1:
+        raise ValueError("window_size_points must be >= 1")
+
+    windows: list[dict] = []
+
+    max_window_heading_sweep = 0.0
+    max_window_start_index: int | None = None
+    max_window_end_index: int | None = None
+
+    for end_index in range(len(points)):
+        start_index = max(0, end_index - window_size_points + 1)
+        window_points = points[start_index : end_index + 1]
+
+        heading_delta_values = [
+            abs(point["heading_delta"])
+            for point in window_points
+            if point.get("heading_delta") is not None
+        ]
+
+        heading_sweep = sum(heading_delta_values)
+        heading_delta_count = len(heading_delta_values)
+
+        if heading_delta_count == 0:
+            mean_abs_heading_delta = 0.0
+        else:
+            mean_abs_heading_delta = heading_sweep / heading_delta_count
+
+        window_entry = {
+            "start_index": start_index,
+            "end_index": end_index,
+            "length": len(window_points),
+            "heading_delta_count": heading_delta_count,
+            "heading_sweep": heading_sweep,
+            "mean_abs_heading_delta": mean_abs_heading_delta,
+        }
+
+        windows.append(window_entry)
+
+        if (
+            max_window_start_index is None
+            or heading_sweep > max_window_heading_sweep
+        ):
+            max_window_heading_sweep = heading_sweep
+            max_window_start_index = start_index
+            max_window_end_index = end_index
+
+    return {
+        "mode": "trailing_point_count",
+        "window_size_points": window_size_points,
+        "windows": windows,
+        "max_window_heading_sweep": max_window_heading_sweep,
+        "max_window_start_index": max_window_start_index,
+        "max_window_end_index": max_window_end_index,
+    }
+
 def compute_cumulative_heading_sweep(
     heading_delta_points: list[dict],
 ) -> list[dict]:
