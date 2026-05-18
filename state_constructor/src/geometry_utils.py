@@ -276,6 +276,158 @@ def summarize_windowed_heading_sweep(
         "max_window_end_index": max_window_end_index,
     }
 
+def summarize_windowed_spatial_containment(
+    points: list[dict],
+    window_size_points: int,
+) -> dict:
+    if window_size_points < 1:
+        raise ValueError("window_size_points must be >= 1")
+
+    path_length_epsilon = 1e-12
+
+    windows: list[dict] = []
+
+    min_displacement_ratio: float | None = None
+    min_displacement_ratio_start_index: int | None = None
+    min_displacement_ratio_end_index: int | None = None
+
+    min_net_displacement: float | None = None
+    min_net_displacement_start_index: int | None = None
+    min_net_displacement_end_index: int | None = None
+
+    max_path_length: float | None = None
+    max_path_length_start_index: int | None = None
+    max_path_length_end_index: int | None = None
+
+    max_radius_range: float | None = None
+    max_radius_range_start_index: int | None = None
+    max_radius_range_end_index: int | None = None
+
+    for end_index in range(len(points)):
+        start_index = max(0, end_index - window_size_points + 1)
+        window_points = points[start_index : end_index + 1]
+
+        x_values = [point["x"] for point in window_points]
+        y_values = [point["y"] for point in window_points]
+
+        min_x = min(x_values)
+        max_x = max(x_values)
+        min_y = min(y_values)
+        max_y = max(y_values)
+
+        width = max_x - min_x
+        height = max_y - min_y
+        diagonal = math.sqrt(width**2 + height**2)
+
+        path_length = 0.0
+        for idx in range(1, len(window_points)):
+            previous_point = window_points[idx - 1]
+            current_point = window_points[idx]
+
+            dx = current_point["x"] - previous_point["x"]
+            dy = current_point["y"] - previous_point["y"]
+            path_length += math.sqrt(dx**2 + dy**2)
+
+        first_point = window_points[0]
+        last_point = window_points[-1]
+        net_dx = last_point["x"] - first_point["x"]
+        net_dy = last_point["y"] - first_point["y"]
+        net_displacement = math.sqrt(net_dx**2 + net_dy**2)
+
+        if path_length <= path_length_epsilon:
+            displacement_ratio = None
+        else:
+            displacement_ratio = net_displacement / path_length
+
+        centroid_x = sum(x_values) / len(window_points)
+        centroid_y = sum(y_values) / len(window_points)
+
+        radius_values = []
+        for point in window_points:
+            radius_dx = point["x"] - centroid_x
+            radius_dy = point["y"] - centroid_y
+            radius_values.append(math.sqrt(radius_dx**2 + radius_dy**2))
+
+        mean_radius = sum(radius_values) / len(radius_values)
+        min_radius = min(radius_values)
+        max_radius = max(radius_values)
+        radius_range = max_radius - min_radius
+
+        radius_variance = (
+            sum((radius - mean_radius) ** 2 for radius in radius_values)
+            / len(radius_values)
+        )
+        radius_std = math.sqrt(radius_variance)
+
+        window_entry = {
+            "start_index": start_index,
+            "end_index": end_index,
+            "length": len(window_points),
+            "min_x": min_x,
+            "max_x": max_x,
+            "min_y": min_y,
+            "max_y": max_y,
+            "width": width,
+            "height": height,
+            "diagonal": diagonal,
+            "path_length": path_length,
+            "net_displacement": net_displacement,
+            "displacement_ratio": displacement_ratio,
+            "centroid_x": centroid_x,
+            "centroid_y": centroid_y,
+            "mean_radius": mean_radius,
+            "min_radius": min_radius,
+            "max_radius": max_radius,
+            "radius_range": radius_range,
+            "radius_std": radius_std,
+        }
+
+        windows.append(window_entry)
+
+        if displacement_ratio is not None and (
+            min_displacement_ratio is None
+            or displacement_ratio < min_displacement_ratio
+        ):
+            min_displacement_ratio = displacement_ratio
+            min_displacement_ratio_start_index = start_index
+            min_displacement_ratio_end_index = end_index
+
+        if (
+            min_net_displacement is None
+            or net_displacement < min_net_displacement
+        ):
+            min_net_displacement = net_displacement
+            min_net_displacement_start_index = start_index
+            min_net_displacement_end_index = end_index
+
+        if max_path_length is None or path_length > max_path_length:
+            max_path_length = path_length
+            max_path_length_start_index = start_index
+            max_path_length_end_index = end_index
+
+        if max_radius_range is None or radius_range > max_radius_range:
+            max_radius_range = radius_range
+            max_radius_range_start_index = start_index
+            max_radius_range_end_index = end_index
+
+    return {
+        "mode": "trailing_point_count",
+        "window_size_points": window_size_points,
+        "windows": windows,
+        "min_displacement_ratio": min_displacement_ratio,
+        "min_displacement_ratio_start_index": min_displacement_ratio_start_index,
+        "min_displacement_ratio_end_index": min_displacement_ratio_end_index,
+        "min_net_displacement": min_net_displacement,
+        "min_net_displacement_start_index": min_net_displacement_start_index,
+        "min_net_displacement_end_index": min_net_displacement_end_index,
+        "max_path_length": max_path_length,
+        "max_path_length_start_index": max_path_length_start_index,
+        "max_path_length_end_index": max_path_length_end_index,
+        "max_radius_range": max_radius_range,
+        "max_radius_range_start_index": max_radius_range_start_index,
+        "max_radius_range_end_index": max_radius_range_end_index,
+    }
+
 def compute_cumulative_heading_sweep(
     heading_delta_points: list[dict],
 ) -> list[dict]:

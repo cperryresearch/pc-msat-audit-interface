@@ -18,6 +18,7 @@ from geometry_utils import (
     compute_speed_from_derivatives,
     summarize_same_sign_heading_delta_runs,
     summarize_windowed_heading_sweep,
+    summarize_windowed_spatial_containment,
 )
 from io_utils import (
     ensure_required_paths_exist,
@@ -241,6 +242,14 @@ def construct_state_segmented_trace_v0(
             windowed_heading_sweep_window_size_points,
         )
 
+        spatial_containment_window_size_points = config["state_logic"][
+            "spatial_containment_window_size_points"
+        ]
+        spatial_containment_diagnostics = summarize_windowed_spatial_containment(
+            heading_delta_sign_points,
+            spatial_containment_window_size_points,
+        )
+
         max_same_sign_run_length = max(
             (run["length"] for run in same_sign_heading_delta_runs),
             default=0,
@@ -262,7 +271,7 @@ def construct_state_segmented_trace_v0(
             )
             dominant_rotational_sign = dominant_run["sign"]
 
-        rotational_persistence_diagnostics = {
+        processing_diagnostics = {
             "rotational_persistence": {
                 "heading_delta_sign_epsilon": heading_delta_sign_epsilon,
                 "same_sign_heading_delta_runs": same_sign_heading_delta_runs,
@@ -273,6 +282,7 @@ def construct_state_segmented_trace_v0(
                 "dominant_rotational_sign": dominant_rotational_sign,
             },
             "windowed_heading_sweep": windowed_heading_sweep_diagnostics,
+            "spatial_containment": spatial_containment_diagnostics,
         }
 
         heading_sweep_points = compute_cumulative_heading_sweep(
@@ -294,7 +304,7 @@ def construct_state_segmented_trace_v0(
             source_id=source_id,
             source_label=source_label,
             n_points=len(masked_points),
-            diagnostics=rotational_persistence_diagnostics,
+            diagnostics=processing_diagnostics,
         )
 
         straight_curvature_epsilon = config["state_logic"]["straight_curvature_epsilon"]
