@@ -19,6 +19,7 @@ from geometry_utils import (
     summarize_same_sign_heading_delta_runs,
     summarize_windowed_heading_sweep,
     summarize_windowed_spatial_containment,
+    summarize_windowed_fitted_circle_coherence,
 )
 from io_utils import (
     ensure_required_paths_exist,
@@ -250,6 +251,16 @@ def construct_state_segmented_trace_v0(
             spatial_containment_window_size_points,
         )
 
+        fitted_circle_window_size_points = config["state_logic"][
+            "fitted_circle_window_size_points"
+        ]
+        fitted_circle_coherence_diagnostics = (
+            summarize_windowed_fitted_circle_coherence(
+                heading_delta_sign_points,
+                fitted_circle_window_size_points,
+            )
+        )
+
         max_same_sign_run_length = max(
             (run["length"] for run in same_sign_heading_delta_runs),
             default=0,
@@ -283,6 +294,7 @@ def construct_state_segmented_trace_v0(
             },
             "windowed_heading_sweep": windowed_heading_sweep_diagnostics,
             "spatial_containment": spatial_containment_diagnostics,
+            "fitted_circle_coherence": fitted_circle_coherence_diagnostics,
         }
 
         heading_sweep_points = compute_cumulative_heading_sweep(

@@ -19,7 +19,8 @@
     "hover_speed_epsilon": 0.05,
     "heading_delta_sign_epsilon": 0.001,
     "windowed_heading_sweep_window_size_points": 5,
-    "spatial_containment_window_size_points": 5
+    "spatial_containment_window_size_points": 5,
+    "fitted_circle_window_size_points": 5
   },
   "persistence": {
     "min_run": 3

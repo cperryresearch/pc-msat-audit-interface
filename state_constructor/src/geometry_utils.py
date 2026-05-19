@@ -428,6 +428,398 @@ def summarize_windowed_spatial_containment(
         "max_radius_range_end_index": max_radius_range_end_index,
     }
 
+def summarize_windowed_fitted_circle_coherence(
+    points: list[dict],
+    window_size_points: int,
+) -> dict:
+    if window_size_points < 1:
+        raise ValueError("window_size_points must be >= 1")
+
+    collinearity_epsilon = 1e-12
+    radius_epsilon = 1e-12
+
+    windows: list[dict] = []
+
+    fit_window_count = 0
+    unfit_window_count = 0
+
+    best_mean_radial_residual_ratio: float | None = None
+    best_mean_radial_residual_ratio_start_index: int | None = None
+    best_mean_radial_residual_ratio_end_index: int | None = None
+
+    best_max_radial_residual_ratio: float | None = None
+    best_max_radial_residual_ratio_start_index: int | None = None
+    best_max_radial_residual_ratio_end_index: int | None = None
+
+    best_full_window_mean_radial_residual_ratio: float | None = None
+    best_full_window_mean_radial_residual_ratio_start_index: int | None = None
+    best_full_window_mean_radial_residual_ratio_end_index: int | None = None
+
+    best_full_window_max_radial_residual_ratio: float | None = None
+    best_full_window_max_radial_residual_ratio_start_index: int | None = None
+    best_full_window_max_radial_residual_ratio_end_index: int | None = None
+
+    mean_radial_residual_ratios: list[float] = []
+
+    def solve_3x3(matrix: list[list[float]], vector: list[float]) -> list[float] | None:
+        augmented = [
+            [matrix[row][0], matrix[row][1], matrix[row][2], vector[row]]
+            for row in range(3)
+        ]
+
+        for pivot_index in range(3):
+            pivot_row = max(
+                range(pivot_index, 3),
+                key=lambda row: abs(augmented[row][pivot_index]),
+            )
+
+            pivot_value = augmented[pivot_row][pivot_index]
+
+            if abs(pivot_value) <= collinearity_epsilon:
+                return None
+
+            if pivot_row != pivot_index:
+                augmented[pivot_index], augmented[pivot_row] = (
+                    augmented[pivot_row],
+                    augmented[pivot_index],
+                )
+
+            for column_index in range(pivot_index, 4):
+                augmented[pivot_index][column_index] /= pivot_value
+
+            for row in range(3):
+                if row == pivot_index:
+                    continue
+
+                factor = augmented[row][pivot_index]
+                for column_index in range(pivot_index, 4):
+                    augmented[row][column_index] -= (
+                        factor * augmented[pivot_index][column_index]
+                    )
+
+        return [augmented[row][3] for row in range(3)]
+
+    def median(values: list[float]) -> float | None:
+        if not values:
+            return None
+
+        sorted_values = sorted(values)
+        midpoint = len(sorted_values) // 2
+
+        if len(sorted_values) % 2 == 1:
+            return sorted_values[midpoint]
+
+        return (sorted_values[midpoint - 1] + sorted_values[midpoint]) / 2
+
+    for end_index in range(len(points)):
+        start_index = max(0, end_index - window_size_points + 1)
+        window_points = points[start_index : end_index + 1]
+
+        base_window_entry = {
+            "start_index": start_index,
+            "end_index": end_index,
+            "length": len(window_points),
+        }
+
+        if len(window_points) < 3:
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "insufficient_points",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        x_values = [point["x"] for point in window_points]
+        y_values = [point["y"] for point in window_points]
+
+        x_origin = sum(x_values) / len(x_values)
+        y_origin = sum(y_values) / len(y_values)
+
+        centered_points = [
+            {
+                "x": point["x"] - x_origin,
+                "y": point["y"] - y_origin,
+            }
+            for point in window_points
+        ]
+
+        sum_xx = sum(point["x"] ** 2 for point in centered_points)
+        sum_yy = sum(point["y"] ** 2 for point in centered_points)
+        sum_xy = sum(point["x"] * point["y"] for point in centered_points)
+
+        spread_determinant = (sum_xx * sum_yy) - (sum_xy**2)
+
+        if abs(spread_determinant) <= collinearity_epsilon:
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "near_collinear",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        # Algebraic circle fit in centered local coordinates:
+        # x^2 + y^2 = a*x + b*y + c
+        # local_center_x = a / 2
+        # local_center_y = b / 2
+        # radius = sqrt(c + local_center_x^2 + local_center_y^2)
+        normal_matrix = [[0.0, 0.0, 0.0] for _ in range(3)]
+        normal_vector = [0.0, 0.0, 0.0]
+
+        for point in centered_points:
+            x = point["x"]
+            y = point["y"]
+            row = [x, y, 1.0]
+            target = (x**2) + (y**2)
+
+            for row_index in range(3):
+                normal_vector[row_index] += row[row_index] * target
+
+                for column_index in range(3):
+                    normal_matrix[row_index][column_index] += (
+                        row[row_index] * row[column_index]
+                    )
+
+        solution = solve_3x3(normal_matrix, normal_vector)
+
+        if solution is None:
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "numerically_unstable",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        a_coefficient, b_coefficient, c_coefficient = solution
+
+        local_center_x = a_coefficient / 2
+        local_center_y = b_coefficient / 2
+        radius_squared = (
+            c_coefficient + (local_center_x**2) + (local_center_y**2)
+        )
+
+        if radius_squared <= 0 or not math.isfinite(radius_squared):
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "numerically_unstable",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        radius = math.sqrt(radius_squared)
+
+        if radius <= radius_epsilon:
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "near_zero_radius",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        center_x = x_origin + local_center_x
+        center_y = y_origin + local_center_y
+
+        if (
+            not math.isfinite(center_x)
+            or not math.isfinite(center_y)
+            or not math.isfinite(radius)
+        ):
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "numerically_unstable",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        point_radii = []
+        radial_residuals = []
+
+        for point in window_points:
+            dx = point["x"] - center_x
+            dy = point["y"] - center_y
+            point_radius = math.sqrt((dx**2) + (dy**2))
+            radial_residual = abs(point_radius - radius)
+
+            if (
+                not math.isfinite(point_radius)
+                or not math.isfinite(radial_residual)
+            ):
+                point_radii = []
+                radial_residuals = []
+                break
+
+            point_radii.append(point_radius)
+            radial_residuals.append(radial_residual)
+
+        if not point_radii or not radial_residuals:
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "numerically_unstable",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        mean_point_radius = sum(point_radii) / len(point_radii)
+        min_point_radius = min(point_radii)
+        max_point_radius = max(point_radii)
+        point_radius_range = max_point_radius - min_point_radius
+
+        point_radius_variance = (
+            sum((point_radius - mean_point_radius) ** 2 for point_radius in point_radii)
+            / len(point_radii)
+        )
+        point_radius_std = math.sqrt(point_radius_variance)
+
+        mean_radial_residual = sum(radial_residuals) / len(radial_residuals)
+        max_radial_residual = max(radial_residuals)
+
+        radial_residual_variance = (
+            sum(
+                (radial_residual - mean_radial_residual) ** 2
+                for radial_residual in radial_residuals
+            )
+            / len(radial_residuals)
+        )
+        radial_residual_std = math.sqrt(radial_residual_variance)
+
+        mean_radial_residual_ratio = mean_radial_residual / radius
+        max_radial_residual_ratio = max_radial_residual / radius
+
+        if (
+            not math.isfinite(mean_radial_residual_ratio)
+            or not math.isfinite(max_radial_residual_ratio)
+        ):
+            windows.append(
+                {
+                    **base_window_entry,
+                    "fit_status": "unfit",
+                    "failure_reason": "numerically_unstable",
+                }
+            )
+            unfit_window_count += 1
+            continue
+
+        window_entry = {
+            **base_window_entry,
+            "fit_status": "fit",
+            "failure_reason": None,
+            "center_x": center_x,
+            "center_y": center_y,
+            "radius": radius,
+            "mean_point_radius": mean_point_radius,
+            "min_point_radius": min_point_radius,
+            "max_point_radius": max_point_radius,
+            "point_radius_range": point_radius_range,
+            "point_radius_std": point_radius_std,
+            "mean_radial_residual": mean_radial_residual,
+            "max_radial_residual": max_radial_residual,
+            "radial_residual_std": radial_residual_std,
+            "mean_radial_residual_ratio": mean_radial_residual_ratio,
+            "max_radial_residual_ratio": max_radial_residual_ratio,
+        }
+
+        windows.append(window_entry)
+        fit_window_count += 1
+        mean_radial_residual_ratios.append(mean_radial_residual_ratio)
+
+        if (
+            best_mean_radial_residual_ratio is None
+            or mean_radial_residual_ratio < best_mean_radial_residual_ratio
+        ):
+            best_mean_radial_residual_ratio = mean_radial_residual_ratio
+            best_mean_radial_residual_ratio_start_index = start_index
+            best_mean_radial_residual_ratio_end_index = end_index
+
+        if (
+            best_max_radial_residual_ratio is None
+            or max_radial_residual_ratio < best_max_radial_residual_ratio
+        ):
+            best_max_radial_residual_ratio = max_radial_residual_ratio
+            best_max_radial_residual_ratio_start_index = start_index
+            best_max_radial_residual_ratio_end_index = end_index
+
+        if len(window_points) == window_size_points:
+            if (
+                best_full_window_mean_radial_residual_ratio is None
+                or mean_radial_residual_ratio
+                < best_full_window_mean_radial_residual_ratio
+            ):
+                best_full_window_mean_radial_residual_ratio = (
+                    mean_radial_residual_ratio
+                )
+                best_full_window_mean_radial_residual_ratio_start_index = start_index
+                best_full_window_mean_radial_residual_ratio_end_index = end_index
+
+            if (
+                best_full_window_max_radial_residual_ratio is None
+                or max_radial_residual_ratio
+                < best_full_window_max_radial_residual_ratio
+            ):
+                best_full_window_max_radial_residual_ratio = max_radial_residual_ratio
+                best_full_window_max_radial_residual_ratio_start_index = start_index
+                best_full_window_max_radial_residual_ratio_end_index = end_index
+
+    return {
+        "mode": "trailing_point_count",
+        "window_size_points": window_size_points,
+        "windows": windows,
+        "fit_window_count": fit_window_count,
+        "unfit_window_count": unfit_window_count,
+        "best_mean_radial_residual_ratio": best_mean_radial_residual_ratio,
+        "best_mean_radial_residual_ratio_start_index": (
+            best_mean_radial_residual_ratio_start_index
+        ),
+        "best_mean_radial_residual_ratio_end_index": (
+            best_mean_radial_residual_ratio_end_index
+        ),
+        "best_max_radial_residual_ratio": best_max_radial_residual_ratio,
+        "best_max_radial_residual_ratio_start_index": (
+            best_max_radial_residual_ratio_start_index
+        ),
+        "best_max_radial_residual_ratio_end_index": (
+            best_max_radial_residual_ratio_end_index
+        ),
+        "best_full_window_mean_radial_residual_ratio": (
+            best_full_window_mean_radial_residual_ratio
+        ),
+        "best_full_window_mean_radial_residual_ratio_start_index": (
+            best_full_window_mean_radial_residual_ratio_start_index
+        ),
+        "best_full_window_mean_radial_residual_ratio_end_index": (
+            best_full_window_mean_radial_residual_ratio_end_index
+        ),
+        "best_full_window_max_radial_residual_ratio": (
+            best_full_window_max_radial_residual_ratio
+        ),
+        "best_full_window_max_radial_residual_ratio_start_index": (
+            best_full_window_max_radial_residual_ratio_start_index
+        ),
+        "best_full_window_max_radial_residual_ratio_end_index": (
+            best_full_window_max_radial_residual_ratio_end_index
+        ),
+        "median_mean_radial_residual_ratio": median(mean_radial_residual_ratios),
+    }
+
 def compute_cumulative_heading_sweep(
     heading_delta_points: list[dict],
 ) -> list[dict]:
