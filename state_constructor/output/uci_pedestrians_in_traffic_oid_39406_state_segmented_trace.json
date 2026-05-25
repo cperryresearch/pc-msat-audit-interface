@@ -10285,6 +10285,22 @@
         "best_full_window_max_radial_residual_ratio_start_index": 104,
         "best_full_window_max_radial_residual_ratio_end_index": 108,
         "median_mean_radial_residual_ratio": 0.0008479552628122941
+      },
+      "orb_candidate_support": {
+        "support_status": "withheld",
+        "support_window_count": 0,
+        "support_windows": [],
+        "withheld_reasons": [
+          "no_qualifying_rotational_persistence",
+          "insufficient_heading_sweep",
+          "insufficient_path_length",
+          "insufficient_spatial_containment",
+          "insufficient_circle_coherence"
+        ],
+        "strict_overlap_required": true,
+        "same_window_required": true,
+        "emits_candidate_state": false,
+        "emits_final_state": false
       }
     }
   },

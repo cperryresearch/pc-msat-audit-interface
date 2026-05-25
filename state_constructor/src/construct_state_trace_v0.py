@@ -45,6 +45,10 @@ from state_logic import (
     summarize_contiguous_runs,
 )
 
+from support_logic import (
+    summarize_orb_candidate_support,
+)
+
 
 def validate_v0_point_vocab(points: list[dict]) -> None:
     allowed_candidate_states = {"Straight", "Turn", "Hover", None}
@@ -309,16 +313,6 @@ def construct_state_segmented_trace_v0(
             speed_min_for_curvature,
         )
 
-        artifact_header = build_artifact_header(
-            config=config,
-            trajectory_id=trajectory_id,
-            source_type=source_type,
-            source_id=source_id,
-            source_label=source_label,
-            n_points=len(masked_points),
-            diagnostics=processing_diagnostics,
-        )
-
         straight_curvature_epsilon = config["state_logic"]["straight_curvature_epsilon"]
         hover_speed_epsilon = config["state_logic"]["hover_speed_epsilon"]
         min_run = config["persistence"]["min_run"]
@@ -336,6 +330,40 @@ def construct_state_segmented_trace_v0(
         state_runs = summarize_contiguous_runs(resolved_points, "state")
 
         point_records = build_point_records(resolved_points)
+
+        orb_candidate_support_config = config.get("state_logic", {}).get(
+            "orb_candidate_support",
+            {},
+        )
+
+        orb_candidate_support = summarize_orb_candidate_support(
+            rotational_persistence=processing_diagnostics[
+                "rotational_persistence"
+            ],
+            windowed_heading_sweep=processing_diagnostics[
+                "windowed_heading_sweep"
+            ],
+            spatial_containment=processing_diagnostics[
+                "spatial_containment"
+            ],
+            fitted_circle_coherence=processing_diagnostics[
+                "fitted_circle_coherence"
+            ],
+            points=point_records,
+            config=orb_candidate_support_config,
+        )
+
+        processing_diagnostics["orb_candidate_support"] = orb_candidate_support
+
+        artifact_header = build_artifact_header(
+            config=config,
+            trajectory_id=trajectory_id,
+            source_type=source_type,
+            source_id=source_id,
+            source_label=source_label,
+            n_points=len(masked_points),
+            diagnostics=processing_diagnostics,
+        )
 
         artifact = assemble_state_segmented_trace(
             artifact_header=artifact_header,

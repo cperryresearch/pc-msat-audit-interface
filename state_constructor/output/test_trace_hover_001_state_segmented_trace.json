@@ -454,6 +454,20 @@
         "best_full_window_max_radial_residual_ratio_start_index": null,
         "best_full_window_max_radial_residual_ratio_end_index": null,
         "median_mean_radial_residual_ratio": null
+      },
+      "orb_candidate_support": {
+        "support_status": "withheld",
+        "support_window_count": 0,
+        "support_windows": [],
+        "withheld_reasons": [
+          "no_qualifying_rotational_persistence",
+          "diagnostics_missing",
+          "no_same_window_overlap"
+        ],
+        "strict_overlap_required": true,
+        "same_window_required": true,
+        "emits_candidate_state": false,
+        "emits_final_state": false
       }
     }
   },

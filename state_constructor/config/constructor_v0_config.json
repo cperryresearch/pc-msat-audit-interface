@@ -20,8 +20,44 @@
     "heading_delta_sign_epsilon": 0.001,
     "windowed_heading_sweep_window_size_points": 5,
     "spatial_containment_window_size_points": 5,
-    "fitted_circle_window_size_points": 5
+    "fitted_circle_window_size_points": 5,
+    "orb_candidate_support": {
+      "enabled": true,
+      "diagnostic_only": true,
+      "strict_overlap_required": true,
+      "same_window_required": true,
+      "window_size_points": 5,
+      "min_rotational_run_length_points": 5,
+      "min_rotational_run_cumulative_abs_heading_delta": 1.5,
+      "min_window_heading_sweep": 1.5,
+      "min_path_length": 1.0,
+      "max_displacement_ratio": 0.9,
+      "max_mean_radial_residual_ratio": 0.00005,
+      "max_max_radial_residual_ratio": 0.0001,
+      "exclude_hover_dominated_windows": true,
+      "emits_candidate_state": false,
+      "emits_final_state": false
+    }
   },
+  "orb_candidate_support": {
+  "enabled": true,
+  "diagnostic_only": true,
+  "strict_overlap_required": true,
+  "same_window_required": true,
+  "window_size_points": 5,
+
+  "min_rotational_run_length_points": 5,
+  "min_rotational_run_cumulative_abs_heading_delta": 1.5,
+  "min_window_heading_sweep": 1.5,
+  "min_path_length": 1.0,
+  "max_displacement_ratio": 0.9,
+  "max_mean_radial_residual_ratio": 0.00005,
+  "max_max_radial_residual_ratio": 0.0001,
+
+  "exclude_hover_dominated_windows": true,
+  "emits_candidate_state": false,
+  "emits_final_state": false
+},
   "persistence": {
     "min_run": 3
   }
