@@ -1,4 +1,5 @@
 import { realUciPedestriansInTrafficOid39406Artifact } from "./realUciPedestriansInTrafficOid39406Artifact";
+import { realConstructorTestTraceOrbLike001Artifact } from "./realConstructorTestTraceOrbLike001Artifact";
 
 export type SampleCandidateEntry = {
   id: string;
@@ -1012,6 +1013,13 @@ export const sampleCandidateArtifacts: SampleCandidateEntry[] = [
     description:
       "Real upstream-produced constructor artifact admitted through the current parent intake exercise flow.",
     candidateArtifact: realConstructorTraceArtifact,
+  },
+  {
+    id: "real-constructor-test-trace-orb-like-001",
+    label: "Real constructor trace: orb-like probe 001",
+    description:
+      "Real upstream-produced constructor artifact for the diagnostic-only Orb support probe. Orb support may be accepted, but Orb is not emitted.",
+    candidateArtifact: realConstructorTestTraceOrbLike001Artifact,
   },
   {
   id: "real-constructor-uci-pedestrians-oid-39406",
