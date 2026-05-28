@@ -1,0 +1,14 @@
+exclude:
+  - state_constructor/
+  - pc-maw/
+  - playback/
+  - renderer/
+  - sandbox/
+  - spec/
+  - node_modules/
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - tsconfig.node.json
+  - vite.config.ts
+  - requirements.txt
