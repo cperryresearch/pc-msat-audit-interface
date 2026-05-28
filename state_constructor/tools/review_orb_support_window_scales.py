@@ -7,6 +7,10 @@ from typing import Any
 
 DEFAULT_WINDOW_SIZES = [5, 25, 50, 100, 250, 500, 1000]
 
+COMBINED_CANDIDATE_MIN_PATH_LENGTH = 1.0
+COMBINED_CANDIDATE_MIN_HEADING_SWEEP = 1.0
+COMBINED_CANDIDATE_MAX_DISPLACEMENT_RATIO = 0.9
+
 
 def load_artifact(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -328,10 +332,10 @@ def get_combined_candidates(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         row
         for row in rows
         if row["inside_rotational_run"]
-        and row["path_length"] >= 1.0
-        and row["heading_sweep"] >= 1.0
+        and row["path_length"] >= COMBINED_CANDIDATE_MIN_PATH_LENGTH
+        and row["heading_sweep"] >= COMBINED_CANDIDATE_MIN_HEADING_SWEEP
         and row["displacement_ratio"] is not None
-        and row["displacement_ratio"] <= 0.9
+        and row["displacement_ratio"] <= COMBINED_CANDIDATE_MAX_DISPLACEMENT_RATIO
     ]
 
     return sorted(
@@ -346,11 +350,96 @@ def get_combined_candidates(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def build_review_thresholds() -> dict[str, Any]:
+    return {
+        "fit_row_screen": {
+            "requires_circle_fit_status": "fit",
+            "requires_displacement_ratio": True,
+        },
+        "combined_candidate_screen": {
+            "requires_inside_rotational_run": True,
+            "min_path_length": COMBINED_CANDIDATE_MIN_PATH_LENGTH,
+            "min_heading_sweep": COMBINED_CANDIDATE_MIN_HEADING_SWEEP,
+            "requires_displacement_ratio": True,
+            "max_displacement_ratio": COMBINED_CANDIDATE_MAX_DISPLACEMENT_RATIO,
+        },
+    }
+
+
+def build_no_emission_boundary() -> dict[str, bool]:
+    return {
+        "review_only": True,
+        "modifies_artifact": False,
+        "emits_candidate_state": False,
+        "emits_final_state": False,
+        "changes_run_summary": False,
+        "changes_pc_maw_admission": False,
+        "changes_playback_behavior": False,
+    }
+
+
+def build_review_report(
+    artifact_path: Path,
+    artifact: dict[str, Any],
+    points: list[dict[str, Any]],
+    rotational_runs: list[dict[str, Any]],
+    window_sizes: list[int],
+    step: int,
+    summary_only: bool,
+) -> dict[str, Any]:
+    strongest_rotational_run = (
+        max(
+            rotational_runs,
+            key=lambda run: run.get("cumulative_abs_heading_delta", 0.0),
+        )
+        if rotational_runs
+        else None
+    )
+
+    window_size_summaries: list[dict[str, Any]] = []
+
+    for window_size in window_sizes:
+        rows = review_window_size(points, rotational_runs, window_size, step)
+        fit_rows = get_fit_rows(rows)
+        combined_candidates = get_combined_candidates(fit_rows)
+
+        window_size_summaries.append(
+            {
+                "window_size": window_size,
+                "windows_evaluated": len(rows),
+                "fit_windows": len(fit_rows),
+                "combined_candidate_count": len(combined_candidates),
+                "best_combined_candidate": combined_candidates[0]
+                if combined_candidates
+                else None,
+                "top_combined_candidates": combined_candidates[:3],
+            }
+        )
+
+    return {
+        "schema_name": "orb_support_window_scale_review",
+        "schema_version": "review_v0",
+        "review_metadata": {
+            "artifact_path": str(artifact_path),
+            "artifact_id": artifact.get("artifact", {}).get("artifact_id"),
+            "points": len(points),
+            "window_sizes": window_sizes,
+            "step": step,
+            "summary_only": summary_only,
+        },
+        "no_emission_boundary": build_no_emission_boundary(),
+        "review_thresholds": build_review_thresholds(),
+        "strongest_rotational_run": strongest_rotational_run,
+        "window_size_summaries": window_size_summaries,
+    }
+
+
 def print_ranked(title: str, rows: list[dict[str, Any]], limit: int = 8) -> None:
     print(f"\n{title}")
 
     for row in rows[:limit]:
         print(" ", compact_window(row))
+
 
 
 def print_summary_for_window_size(
@@ -418,6 +507,31 @@ def print_full_for_window_size(
         combined_candidates,
     )
 
+def print_summary_from_report_entry(entry: dict[str, Any]) -> None:
+    print("\n" + "=" * 88)
+    print("WINDOW SIZE:", entry["window_size"])
+    print("windows_evaluated:", entry["windows_evaluated"])
+    print("fit_windows:", entry["fit_windows"])
+    print("combined_candidate_count:", entry["combined_candidate_count"])
+
+    print("\nbest_combined_candidate:")
+    if entry["best_combined_candidate"] is not None:
+        print(" ", entry["best_combined_candidate"])
+    else:
+        print("  None")
+
+    print("\ntop_3_combined_candidates:")
+    if entry["top_combined_candidates"]:
+        for row in entry["top_combined_candidates"]:
+            print(" ", row)
+    else:
+        print("  None")
+
+
+def print_report_summary(report: dict[str, Any]) -> None:
+    for entry in report["window_size_summaries"]:
+        print_summary_from_report_entry(entry)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -445,6 +559,11 @@ def main() -> None:
         help="Print only concise per-window-size summaries.",
     )
 
+    parser.add_argument(
+        "--summary-output",
+        help="Optional path to write a full-precision JSON summary report.",
+    )
+
     args = parser.parse_args()
 
     artifact_path = Path(args.artifact)
@@ -457,6 +576,16 @@ def main() -> None:
     artifact = load_artifact(artifact_path)
     points = get_points(artifact)
     rotational_runs = summarize_same_sign_rotational_runs(points)
+
+    report = build_review_report(
+        artifact_path=artifact_path,
+        artifact=artifact,
+        points=points,
+        rotational_runs=rotational_runs,
+        window_sizes=window_sizes,
+        step=args.step,
+        summary_only=args.summary_only,
+    )
 
     print("Orb support window-scale review")
     print("artifact:", artifact_path)
@@ -480,19 +609,14 @@ def main() -> None:
         print("\nStrongest rotational run:")
         print("  None")
 
-    for window_size in window_sizes:
-        rows = review_window_size(points, rotational_runs, window_size, args.step)
-        fit_rows = get_fit_rows(rows)
-        combined_candidates = get_combined_candidates(fit_rows)
+    if args.summary_only:
+        print_report_summary(report)
+    else:
+        for window_size in window_sizes:
+            rows = review_window_size(points, rotational_runs, window_size, args.step)
+            fit_rows = get_fit_rows(rows)
+            combined_candidates = get_combined_candidates(fit_rows)
 
-        if args.summary_only:
-            print_summary_for_window_size(
-                window_size,
-                rows,
-                fit_rows,
-                combined_candidates,
-            )
-        else:
             print_full_for_window_size(
                 window_size,
                 rows,
@@ -500,6 +624,16 @@ def main() -> None:
                 combined_candidates,
             )
 
+    if args.summary_output:
+        summary_output_path = Path(args.summary_output)
+        summary_output_path.parent.mkdir(parents=True, exist_ok=True)
+        summary_output_path.write_text(
+            json.dumps(report, indent=2),
+            encoding="utf-8",
+        )
+        print("\nWrote summary output:", summary_output_path)
+
 
 if __name__ == "__main__":
+
     main()
