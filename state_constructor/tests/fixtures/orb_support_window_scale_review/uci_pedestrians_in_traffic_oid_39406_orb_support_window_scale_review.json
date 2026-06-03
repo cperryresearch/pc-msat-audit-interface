@@ -1,0 +1,107 @@
+{
+  "schema_name": "orb_support_window_scale_review",
+  "schema_version": "review_v0",
+  "review_metadata": {
+    "artifact_path": "state_constructor\\output\\uci_pedestrians_in_traffic_oid_39406_state_segmented_trace.json",
+    "artifact_id": "uci_pedestrians_in_traffic_oid_39406_v0",
+    "points": 198,
+    "window_sizes": [
+      5,
+      25,
+      50,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "step": 5,
+    "summary_only": true
+  },
+  "no_emission_boundary": {
+    "review_only": true,
+    "modifies_artifact": false,
+    "emits_candidate_state": false,
+    "emits_final_state": false,
+    "changes_run_summary": false,
+    "changes_pc_maw_admission": false,
+    "changes_playback_behavior": false
+  },
+  "review_thresholds": {
+    "fit_row_screen": {
+      "requires_circle_fit_status": "fit",
+      "requires_displacement_ratio": true
+    },
+    "combined_candidate_screen": {
+      "requires_inside_rotational_run": true,
+      "min_path_length": 1.0,
+      "min_heading_sweep": 1.0,
+      "requires_displacement_ratio": true,
+      "max_displacement_ratio": 0.9
+    }
+  },
+  "strongest_rotational_run": {
+    "sign": -1,
+    "start_index": 43,
+    "end_index": 49,
+    "length": 7,
+    "cumulative_abs_heading_delta": 0.6252307891169608
+  },
+  "window_size_summaries": [
+    {
+      "window_size": 5,
+      "windows_evaluated": 39,
+      "fit_windows": 39,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 25,
+      "windows_evaluated": 35,
+      "fit_windows": 35,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 50,
+      "windows_evaluated": 30,
+      "fit_windows": 30,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 100,
+      "windows_evaluated": 20,
+      "fit_windows": 20,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 250,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 500,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 1000,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    }
+  ]
+}

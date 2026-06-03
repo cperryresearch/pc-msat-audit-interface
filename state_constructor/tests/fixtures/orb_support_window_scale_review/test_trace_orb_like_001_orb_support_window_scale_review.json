@@ -1,0 +1,141 @@
+{
+  "schema_name": "orb_support_window_scale_review",
+  "schema_version": "review_v0",
+  "review_metadata": {
+    "artifact_path": "state_constructor\\output\\test_trace_orb_like_001_state_segmented_trace.json",
+    "artifact_id": "test_trace_orb_like_001_v0",
+    "points": 13,
+    "window_sizes": [
+      5,
+      25,
+      50,
+      100,
+      250,
+      500,
+      1000
+    ],
+    "step": 5,
+    "summary_only": true
+  },
+  "no_emission_boundary": {
+    "review_only": true,
+    "modifies_artifact": false,
+    "emits_candidate_state": false,
+    "emits_final_state": false,
+    "changes_run_summary": false,
+    "changes_pc_maw_admission": false,
+    "changes_playback_behavior": false
+  },
+  "review_thresholds": {
+    "fit_row_screen": {
+      "requires_circle_fit_status": "fit",
+      "requires_displacement_ratio": true
+    },
+    "combined_candidate_screen": {
+      "requires_inside_rotational_run": true,
+      "min_path_length": 1.0,
+      "min_heading_sweep": 1.0,
+      "requires_displacement_ratio": true,
+      "max_displacement_ratio": 0.9
+    }
+  },
+  "strongest_rotational_run": {
+    "sign": 1,
+    "start_index": 1,
+    "end_index": 12,
+    "length": 12,
+    "cumulative_abs_heading_delta": 5.057816508204851
+  },
+  "window_size_summaries": [
+    {
+      "window_size": 5,
+      "windows_evaluated": 2,
+      "fit_windows": 2,
+      "combined_candidate_count": 1,
+      "best_combined_candidate": {
+        "start_index": 5,
+        "end_index": 9,
+        "length": 5,
+        "t_start": 0.5,
+        "t_end": 0.9,
+        "heading_sweep": 2.617997281496488,
+        "path_length": 2.0705361611381616,
+        "net_displacement": 1.7320381058163818,
+        "displacement_ratio": 0.8365167140400439,
+        "circle_fit_status": "fit",
+        "mean_radial_residual_ratio": 9.31075082545994e-06,
+        "max_radial_residual_ratio": 1.6769726072841656e-05,
+        "inside_rotational_run": true,
+        "rotational_run_length": 12,
+        "rotational_run_cumulative_abs_heading_delta": 5.057816508204851
+      },
+      "top_combined_candidates": [
+        {
+          "start_index": 5,
+          "end_index": 9,
+          "length": 5,
+          "t_start": 0.5,
+          "t_end": 0.9,
+          "heading_sweep": 2.617997281496488,
+          "path_length": 2.0705361611381616,
+          "net_displacement": 1.7320381058163818,
+          "displacement_ratio": 0.8365167140400439,
+          "circle_fit_status": "fit",
+          "mean_radial_residual_ratio": 9.31075082545994e-06,
+          "max_radial_residual_ratio": 1.6769726072841656e-05,
+          "inside_rotational_run": true,
+          "rotational_run_length": 12,
+          "rotational_run_cumulative_abs_heading_delta": 5.057816508204851
+        }
+      ]
+    },
+    {
+      "window_size": 25,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 50,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 100,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 250,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 500,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    },
+    {
+      "window_size": 1000,
+      "windows_evaluated": 0,
+      "fit_windows": 0,
+      "combined_candidate_count": 0,
+      "best_combined_candidate": null,
+      "top_combined_candidates": []
+    }
+  ]
+}
