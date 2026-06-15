@@ -11,3 +11,7 @@ sandbox/sandbox_outputs/*.zip
 # Private LLC / non-public prototype workspace
 private_tools/
 private_output/
+# Local/generated state-constructor inputs and outputs
+state_constructor/input/*.csv
+state_constructor/input/export_*_runtime_csv.py
+state_constructor/output/
