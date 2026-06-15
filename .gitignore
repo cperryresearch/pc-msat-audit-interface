@@ -7,3 +7,7 @@ sandbox/sandbox_outputs/*.tif
 sandbox/sandbox_outputs/*.tiff
 sandbox/sandbox_outputs/*.psd
 sandbox/sandbox_outputs/*.zip
+
+# Private LLC / non-public prototype workspace
+private_tools/
+private_output/
