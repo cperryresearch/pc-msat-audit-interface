@@ -180,6 +180,21 @@ class OrbCandidacyEmissionReviewTests(unittest.TestCase):
             "deferred_pending_private_integration",
         )
         self.assertEqual(
+            emission_review["duration_cadence_gate"]["gate_status"],
+            "deferred_pending_private_integration",
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["review_source"],
+            "not_supplied",
+        )
+        self.assertIsNone(
+            emission_review["duration_cadence_gate"]["duration_effect"]
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["emission_effect"],
+            "allow_existing_v0_behavior",
+        )
+        self.assertEqual(
             emission_review["duration_cadence_policy"]["cadence_gate_status"],
             "deferred_pending_private_integration",
         )

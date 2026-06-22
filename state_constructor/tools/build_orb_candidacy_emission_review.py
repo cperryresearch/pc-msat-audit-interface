@@ -256,6 +256,16 @@ def build_orb_candidacy_emission_review(
             "renders_orb_state_segments": False,
             "requires_frontend_change": False,
         },
+        "duration_cadence_gate": {
+            "gate_status": "deferred_pending_private_integration",
+            "review_source": "not_supplied",
+            "duration_effect": None,
+            "emission_effect": "allow_existing_v0_behavior",
+            "notes": [
+                "Duration/cadence evidence is not evaluated by this public helper in tracked v0.",
+                "Private review may later supply a derived duration_effect contract only.",
+            ],
+        },
         "duration_cadence_policy": {
             "duration_gate_status": "deferred_pending_private_integration",
             "cadence_gate_status": "deferred_pending_private_integration",
