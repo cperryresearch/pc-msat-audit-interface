@@ -32,6 +32,41 @@ EXPECTED_INPUT_SCHEMA_VERSION = "review_v0"
 ALLOWED_EMISSION_MODES = {"internal_review", "private_review"}
 SYNTHETIC_DIAGNOSTIC_ARTIFACT_IDS = {"test_trace_orb_like_001_v0"}
 
+SUPPLIED_DURATION_CADENCE_REVIEW_SOURCE = "supplied_derived_contract"
+ALLOWED_DURATION_CADENCE_CONTRACT_KEYS = {
+    "review_source",
+    "duration_effect",
+    "notes",
+}
+
+DURATION_CADENCE_EFFECTS = {
+    "no_point_count_support": {
+        "emission_effect": "withhold_candidate_label",
+        "passed": False,
+        "failure_reason": "duration_cadence_no_point_count_support",
+    },
+    "point_count_weakened_by_duration": {
+        "emission_effect": "withhold_candidate_label",
+        "passed": False,
+        "failure_reason": "duration_cadence_weakened_point_support",
+    },
+    "point_count_preserved_by_duration": {
+        "emission_effect": "allow_gate_continuation",
+        "passed": True,
+        "failure_reason": None,
+    },
+    "cadence_missing_or_inconclusive": {
+        "emission_effect": "withhold_candidate_label",
+        "passed": False,
+        "failure_reason": "duration_cadence_inconclusive",
+    },
+    "inspect_manually": {
+        "emission_effect": "withhold_candidate_label",
+        "passed": False,
+        "failure_reason": "duration_cadence_inconclusive",
+    },
+}
+
 
 def load_json(path: Path) -> Dict[str, Any]:
     with path.open("r", encoding="utf-8") as f:
@@ -122,18 +157,147 @@ def unique_ordered(values: List[str]) -> List[str]:
     return list(dict.fromkeys(values))
 
 
+def deferred_duration_cadence_gate() -> Dict[str, Any]:
+    return {
+        "gate_status": "deferred_pending_private_integration",
+        "review_source": "not_supplied",
+        "duration_effect": None,
+        "emission_effect": "allow_existing_v0_behavior",
+        "notes": [
+            "No duration/cadence derived contract was supplied.",
+            "Current v0 candidate-label behavior is preserved.",
+        ],
+    }
+
+
+def invalid_duration_cadence_gate(
+    *,
+    review_source: Optional[Any],
+    duration_effect: Optional[Any],
+    notes: List[str],
+) -> Dict[str, Any]:
+    return {
+        "gate_status": "invalid",
+        "review_source": review_source if isinstance(review_source, str) else None,
+        "duration_effect": duration_effect if isinstance(duration_effect, str) else None,
+        "emission_effect": "withhold_candidate_label",
+        "notes": notes,
+    }
+
+
+def evaluate_duration_cadence_contract(
+    duration_cadence_contract: Optional[Dict[str, Any]],
+) -> Dict[str, Any]:
+    if duration_cadence_contract is None:
+        return {
+            "gate": deferred_duration_cadence_gate(),
+            "gate_required": False,
+            "passed": None,
+            "failure_reason": None,
+            "deferred": True,
+        }
+
+    if not isinstance(duration_cadence_contract, dict):
+        return {
+            "gate": invalid_duration_cadence_gate(
+                review_source=None,
+                duration_effect=None,
+                notes=["Duration/cadence contract must be an object."],
+            ),
+            "gate_required": True,
+            "passed": False,
+            "failure_reason": "duration_cadence_contract_invalid",
+            "deferred": False,
+        }
+
+    review_source = duration_cadence_contract.get(
+        "review_source",
+        SUPPLIED_DURATION_CADENCE_REVIEW_SOURCE,
+    )
+    duration_effect = duration_cadence_contract.get("duration_effect")
+    contract_notes = duration_cadence_contract.get("notes", [])
+    invalid_notes: List[str] = []
+
+    unsupported_keys = sorted(
+        set(duration_cadence_contract.keys()) - ALLOWED_DURATION_CADENCE_CONTRACT_KEYS
+    )
+    if unsupported_keys:
+        invalid_notes.append(
+            "Unsupported duration/cadence contract fields: "
+            + ", ".join(unsupported_keys)
+        )
+
+    if review_source != SUPPLIED_DURATION_CADENCE_REVIEW_SOURCE:
+        invalid_notes.append(
+            "review_source must be 'supplied_derived_contract' for supplied contracts."
+        )
+
+    if duration_effect not in DURATION_CADENCE_EFFECTS:
+        invalid_notes.append(
+            "duration_effect must be one of: "
+            + ", ".join(sorted(DURATION_CADENCE_EFFECTS.keys()))
+        )
+
+    if "notes" in duration_cadence_contract and not (
+        isinstance(contract_notes, list)
+        and all(isinstance(note, str) for note in contract_notes)
+    ):
+        invalid_notes.append("notes must be a list of strings when supplied.")
+
+    if invalid_notes:
+        return {
+            "gate": invalid_duration_cadence_gate(
+                review_source=review_source,
+                duration_effect=duration_effect,
+                notes=invalid_notes,
+            ),
+            "gate_required": True,
+            "passed": False,
+            "failure_reason": "duration_cadence_contract_invalid",
+            "deferred": False,
+        }
+
+    effect_policy = DURATION_CADENCE_EFFECTS[duration_effect]
+
+    return {
+        "gate": {
+            "gate_status": "reviewed",
+            "review_source": review_source,
+            "duration_effect": duration_effect,
+            "emission_effect": effect_policy["emission_effect"],
+            "notes": contract_notes,
+        },
+        "gate_required": True,
+        "passed": effect_policy["passed"],
+        "failure_reason": effect_policy["failure_reason"],
+        "deferred": False,
+    }
+
+
 def build_orb_candidacy_emission_review(
     data: Dict[str, Any],
     source_path: Optional[Path] = None,
     *,
     emission_mode: str = "none",
+    duration_cadence_contract: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     artifact_id = data.get("artifact_id") if isinstance(data.get("artifact_id"), str) else None
     artifact_class = classify_artifact(artifact_id)
+    duration_cadence_result = evaluate_duration_cadence_contract(
+        duration_cadence_contract
+    )
 
     passed_gates: List[str] = []
     failed_gates: List[str] = []
     withheld_reasons: List[str] = []
+
+    required_gates = [
+        "source_schema_gate",
+        "source_acceptance_gate",
+        "source_no_emission_boundary_gate",
+        "emission_mode_gate",
+        "provenance_gate",
+    ]
 
     add_gate(
         gate_name="source_schema_gate",
@@ -187,6 +351,17 @@ def build_orb_candidacy_emission_review(
         failure_reason="provenance_not_emission_allowed",
     )
 
+    if duration_cadence_result["gate_required"]:
+        required_gates.append("duration_cadence_gate")
+        add_gate(
+            gate_name="duration_cadence_gate",
+            passed=duration_cadence_result["passed"] is True,
+            passed_gates=passed_gates,
+            failed_gates=failed_gates,
+            withheld_reasons=withheld_reasons,
+            failure_reason=duration_cadence_result["failure_reason"],
+        )
+
     add_gate(
         gate_name="public_release_gate",
         passed=True,
@@ -214,10 +389,25 @@ def build_orb_candidacy_emission_review(
         failure_reason="final_state_emission_not_allowed",
     )
 
-    deferred_gates = [
-        "duration_gate_deferred_pending_private_integration",
-        "cadence_gate_deferred_pending_private_integration",
-    ]
+    required_gates.extend(
+        [
+            "public_release_gate",
+            "source_artifact_mutation_gate",
+            "final_state_emission_gate",
+        ]
+    )
+
+    deferred_gates = (
+        [
+            "duration_gate_deferred_pending_private_integration",
+            "cadence_gate_deferred_pending_private_integration",
+        ]
+        if duration_cadence_result["deferred"]
+        else []
+    )
+
+    duration_cadence_gate = duration_cadence_result["gate"]
+    duration_cadence_policy_status = duration_cadence_gate["gate_status"]
 
     emission_permitted = not failed_gates
     candidate_label = "Orb" if emission_permitted else None
@@ -256,31 +446,13 @@ def build_orb_candidacy_emission_review(
             "renders_orb_state_segments": False,
             "requires_frontend_change": False,
         },
-        "duration_cadence_gate": {
-            "gate_status": "deferred_pending_private_integration",
-            "review_source": "not_supplied",
-            "duration_effect": None,
-            "emission_effect": "allow_existing_v0_behavior",
-            "notes": [
-                "Duration/cadence evidence is not evaluated by this public helper in tracked v0.",
-                "Private review may later supply a derived duration_effect contract only.",
-            ],
-        },
+        "duration_cadence_gate": duration_cadence_gate,
         "duration_cadence_policy": {
-            "duration_gate_status": "deferred_pending_private_integration",
-            "cadence_gate_status": "deferred_pending_private_integration",
+            "duration_gate_status": duration_cadence_policy_status,
+            "cadence_gate_status": duration_cadence_policy_status,
             "tracked_v0_scope": "synthetic_diagnostic_fixture_only",
         },
-        "required_gates": [
-            "source_schema_gate",
-            "source_acceptance_gate",
-            "source_no_emission_boundary_gate",
-            "emission_mode_gate",
-            "provenance_gate",
-            "public_release_gate",
-            "source_artifact_mutation_gate",
-            "final_state_emission_gate",
-        ],
+        "required_gates": required_gates,
         "passed_gates": unique_ordered(passed_gates),
         "failed_gates": unique_ordered(failed_gates),
         "deferred_gates": deferred_gates,

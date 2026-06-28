@@ -227,6 +227,202 @@ class OrbCandidacyEmissionReviewTests(unittest.TestCase):
             emission_review["withheld_reasons"],
         )
 
+    def test_weakened_duration_contract_withholds_candidate_label(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_orb_like_001_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="internal_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "point_count_weakened_by_duration",
+            },
+        )
+
+        self.assertFalse(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertIsNone(
+            emission_review["candidate_label_emission"]["candidate_label"]
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["gate_status"],
+            "reviewed",
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["emission_effect"],
+            "withhold_candidate_label",
+        )
+        self.assertIn("duration_cadence_gate", emission_review["failed_gates"])
+        self.assertIn(
+            "duration_cadence_weakened_point_support",
+            emission_review["withheld_reasons"],
+        )
+
+    def test_preserved_duration_contract_allows_gate_continuation_only(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_orb_like_001_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="internal_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "point_count_preserved_by_duration",
+            },
+        )
+
+        self.assertTrue(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertEqual(
+            emission_review["candidate_label_emission"]["candidate_label"],
+            "Orb",
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["emission_effect"],
+            "allow_gate_continuation",
+        )
+        self.assertIn("duration_cadence_gate", emission_review["passed_gates"])
+        self.assertNotIn("duration_cadence_gate", emission_review["failed_gates"])
+
+    def test_preserved_duration_contract_does_not_override_provenance_gate(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "white_stork_nils_2014-08-10_140015_60pt_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="private_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "point_count_preserved_by_duration",
+            },
+        )
+
+        self.assertFalse(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertIsNone(
+            emission_review["candidate_label_emission"]["candidate_label"]
+        )
+        self.assertIn("duration_cadence_gate", emission_review["passed_gates"])
+        self.assertIn("provenance_gate", emission_review["failed_gates"])
+        self.assertIn(
+            "provenance_not_emission_allowed",
+            emission_review["withheld_reasons"],
+        )
+
+    def test_no_point_count_duration_contract_withholds_candidate_label(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_hover_001_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="internal_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "no_point_count_support",
+            },
+        )
+
+        self.assertFalse(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertIn("duration_cadence_gate", emission_review["failed_gates"])
+        self.assertIn(
+            "duration_cadence_no_point_count_support",
+            emission_review["withheld_reasons"],
+        )
+
+    def test_inconclusive_duration_contracts_withhold_candidate_label(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_orb_like_001_orb_support_window_scale_review.json"
+        )
+
+        for duration_effect in [
+            "cadence_missing_or_inconclusive",
+            "inspect_manually",
+        ]:
+            with self.subTest(duration_effect=duration_effect):
+                emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+                    acceptance_result,
+                    emission_mode="internal_review",
+                    duration_cadence_contract={
+                        "review_source": "supplied_derived_contract",
+                        "duration_effect": duration_effect,
+                    },
+                )
+
+                self.assertFalse(
+                    emission_review["candidate_label_emission"]["emission_permitted"]
+                )
+                self.assertIsNone(
+                    emission_review["candidate_label_emission"]["candidate_label"]
+                )
+                self.assertIn("duration_cadence_gate", emission_review["failed_gates"])
+                self.assertIn(
+                    "duration_cadence_inconclusive",
+                    emission_review["withheld_reasons"],
+                )
+
+    def test_invalid_duration_contract_is_withheld(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_orb_like_001_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="internal_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "raw_private_threshold_payload",
+            },
+        )
+
+        self.assertFalse(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["gate_status"],
+            "invalid",
+        )
+        self.assertIn("duration_cadence_gate", emission_review["failed_gates"])
+        self.assertIn(
+            "duration_cadence_contract_invalid",
+            emission_review["withheld_reasons"],
+        )
+
+    def test_duration_contract_rejects_private_or_raw_path_fields(self) -> None:
+        acceptance_result = acceptance_result_from_fixture(
+            "test_trace_orb_like_001_orb_support_window_scale_review.json"
+        )
+
+        emission_review = EMISSION_HELPER.build_orb_candidacy_emission_review(
+            acceptance_result,
+            emission_mode="internal_review",
+            duration_cadence_contract={
+                "review_source": "supplied_derived_contract",
+                "duration_effect": "point_count_preserved_by_duration",
+                "source_path": "private_output/cadence_aware_support_review/private.json",
+            },
+        )
+
+        self.assertFalse(
+            emission_review["candidate_label_emission"]["emission_permitted"]
+        )
+        self.assertEqual(
+            emission_review["duration_cadence_gate"]["gate_status"],
+            "invalid",
+        )
+        self.assertIn(
+            "duration_cadence_contract_invalid",
+            emission_review["withheld_reasons"],
+        )
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
